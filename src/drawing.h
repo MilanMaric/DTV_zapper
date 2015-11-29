@@ -15,12 +15,12 @@ if (err != DFB_OK)                                          \
 #include <stdint.h>
 #include <directfb.h>
 
- IDirectFBSurface *primary ;
-    IDirectFB *dfbInterface ;
-    int screenWidth ;
-     int screenHeight;
-	DFBSurfaceDescription surfaceDesc;
-	 int initialized;
+IDirectFBSurface *primary;
+IDirectFB *dfbInterface;
+int screenWidth;
+int screenHeight;
+DFBSurfaceDescription surfaceDesc;
+int initialized;
 
 void setProgramParams(int32_t* argci, char*** argvi);
 void drawTextInfo(int32_t service_number);
