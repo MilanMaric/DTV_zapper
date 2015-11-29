@@ -19,6 +19,8 @@ if (err != DFB_OK)                                          \
   }                                                         \
 }
 
-void setProgramParams(int32_t* argci, char*** argvi);
 void drawTextInfo(int32_t service_number);
+void initDirectFB();
+void deinitDirectFB();
+
 #endif

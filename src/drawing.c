@@ -1,11 +1,11 @@
 #include "drawing.h"
 #include <stdint.h>
 #include <directfb.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<signal.h>
-#include<time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <signal.h>
+#include <time.h>
 #include <stdint.h>
 #include <directfb.h>
 
@@ -57,7 +57,6 @@ void deinitDirectFB()
     dfbInterface->Release(dfbInterface);
 }
 
-
 void timerFunction()
 {
     fillBlack();
@@ -79,6 +78,7 @@ void timerFunction()
 void setTimer(int32_t interval)
 {
     struct sigevent signalEvent;
+    timer_t timerId;
     //reći OS-u da notifikaciju šalje prozivanjem specificirane funkcije iz posebne niti
     signalEvent.sigev_notify = SIGEV_THREAD;
     //funkcija koju će OS prozvati kada interval istekne

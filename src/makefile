@@ -26,7 +26,7 @@ SRC+= drawing.c
 all: dfb_example
 
 dfb_example:
-	$(CC) -o vezba_4 $(SRC) $(CFLAGS) $(LIBS)
+	$(CC) -o dtv_zapper $(SRC) $(CFLAGS) $(LIBS)
     
 clean:
-	rm -f vezba_4
+	rm -f dtv_zapper
