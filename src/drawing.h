@@ -1,6 +1,12 @@
 #ifndef drawing_h
 #define drawing_h
 
+
+#include <stdint.h>
+#include <directfb.h>
+
+
+
 /* helper macro for error checking */
 #define DFBCHECK(x...)                                      \
 {                                                           \
@@ -12,15 +18,6 @@ if (err != DFB_OK)                                          \
     DirectFBErrorFatal( #x, err );                          \
   }                                                         \
 }
-#include <stdint.h>
-#include <directfb.h>
-
-IDirectFBSurface *primary;
-IDirectFB *dfbInterface;
-int screenWidth;
-int screenHeight;
-DFBSurfaceDescription surfaceDesc;
-int initialized;
 
 void setProgramParams(int32_t* argci, char*** argvi);
 void drawTextInfo(int32_t service_number);
