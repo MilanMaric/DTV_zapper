@@ -22,6 +22,7 @@ LIBS := $(LIBS_PATH) -ldirectfb -ldirect -lfusion -lrt
 SRC= main.c
 SRC+= remote.c
 SRC+= drawing.c
+SRC+= table_parser.c
 
 all: dfb_example
 
