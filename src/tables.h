@@ -89,26 +89,20 @@ typedef struct _PmtTable
     uint8_t serviceInfoCount;
 } PmtTable;
 
-int16_t initParsing();
-
-int32_t init_Parse_Pat();
-
-int32_t init_Parse_Pmt(int32_t service_number);
-
-void parsePat(uint8_t *buffer, PatTable* table);
-
-void parsePatHeader(uint8_t *buffer, PatHeader* patHeader);
 
 void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArray[], uint16_t section_length);
-
-void dumpTable(PatTable* table);
-
+void parsePatHeader(uint8_t *buffer, PatHeader* patHeader);
+void dumpPatHeader(PatHeader* patHeader);
+void parsePatTable(uint8_t *buffer, PatTable* table);
+void dumpServiceInfo(PatServiceInfo* patServiceInfo);
+void dumpPatTable(PatTable* table);
 void parsePmt(uint8_t *buffer, PmtTable* table);
-
 void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader);
-
 void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[]);
-
 void dumpPmtTable(PmtTable* pmtTable);
+
+
+int deviceInit();
+void deviceDeInit();
 
 #endif

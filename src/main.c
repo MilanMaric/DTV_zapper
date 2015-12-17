@@ -24,29 +24,29 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <directfb.h>
+#include <pthread.h>
 #include <stdint.h>
 #include "remote.h"
 #include "drawing.h"
 #include "tables.h"
-/* helper macro for error checking */
+#include "remote.h"
 
 
 int32_t main(int32_t argc, char** argv)
 {
     /* initialize DirectFB */
-    DFBCHECK(DirectFBInit(&argc, &argv));
-    initDirectFB();
+  //  DFBCHECK(DirectFBInit(&argc, &argv));
+   // initDirectFB();
     /* init parsing pat*/
-    initParsing();
-    init_Parse_Pat();
-    //wait for while
-    init_Parse_Pmt(1);
+    pthread_t remote_thread;
+    pthread_create(&remote_thread, NULL, &remote_control_thread, NULL);
+    deviceInit();
     
     /*clean up*/
-    pthread_t remote_control_thread;
-    pthread_create(&remote_control_thread, NULL, &remote_control_thread, NULL);
-    pthread_join(remote_control_thread, NULL);
+    
 
-    deinitDirectFB();
+   // deinitDirectFB();
+   pthread_join(remote_thread, NULL);
+   deviceDeInit();
     return 0;
 }

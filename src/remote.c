@@ -23,7 +23,6 @@ SOFTWARE.
  */
 #include "remote.h"
 #include <stdio.h>
-#include <directfb.h>
 #include <stdint.h>
 #include <linux/input.h>
 #include <fcntl.h>
@@ -34,9 +33,8 @@ SOFTWARE.
 #include <pthread.h>
 #include "drawing.h"
 
-
 static int32_t inputFileDesc;
-
+// 
 void* remote_control_thread(void* nn)
 {
     const char* dev = "/dev/input/event0";

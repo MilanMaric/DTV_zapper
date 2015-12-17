@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 #include "tables.h"
+#include "remote.h"
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
@@ -29,133 +30,6 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-
-static pthread_cond_t statusCondition = PTHREAD_COND_INITIALIZER;
-static pthread_mutex_t statusMutex = PTHREAD_MUTEX_INITIALIZER;
-
-static int32_t tunerStatusCallback(t_LockStatus status);
-
-PatTable* patTable;
-PmtTable* pmtTable[MAX_NUM_OF_PIDS];
-
-int32_t pat_Table_Section_Filter_Callback(uint8_t *buffer)
-{
-    dumpTable(patTable);
-    return 0;
-}
-
-int32_t pmt_Table_Section_Filter_Callback(uint8_t *buffer)
-{
-    parsePmt(buffer, pmtTable);
-    dumpPmtTable(pmtTable);
-    return 0;
-}
-
-struct timespec lockStatusWaitTime;
-struct timeval now;
-
-uint32_t playerHandle;
-uint32_t filterHandle;
-uint32_t sourceHandle;
-uint32_t streamHandle;
-
-int16_t initParsing()
-{
-    gettimeofday(&now, NULL);
-    lockStatusWaitTime.tv_sec = now.tv_sec + 10;
-    //Tuner init
-    if (Tuner_Init())
-    {
-        printf("\n%s : ERROR Tuner_Init() fail\n", __FUNCTION__);
-        return INIT_ERROR;
-    }
-    //Tuner register callback
-    if (Tuner_Register_Status_Callback(tunerStatusCallback))
-    {
-        printf("\n%s : ERROR Tuner_Register_Status_Callback() fail\n", __FUNCTION__);
-        return INIT_ERROR;
-    }
-    //Tuner lock
-    if (!Tuner_Lock_To_Frequency(DESIRED_FREQUENCY, BANDWIDTH, DVB_T))
-    {
-        printf("\n%s: INFO Tuner_Lock_To_Frequency(): %d Hz - success!\n", __FUNCTION__, DESIRED_FREQUENCY);
-
-    }
-    else
-    {
-        printf("\n%s: ERROR Tuner_Lock_To_Frequency(): %d Hz - fail!\n", __FUNCTION__, DESIRED_FREQUENCY);
-        Tuner_Deinit();
-        return INIT_ERROR;
-    }
-    //wait until tuner is locked
-    pthread_mutex_lock(&statusMutex);
-    if (ETIMEDOUT == pthread_cond_timedwait(&statusCondition, &statusMutex, &lockStatusWaitTime))
-    {
-        printf("\n%s:ERROR Lock timeout exceeded!\n", __FUNCTION__);
-        Tuner_Deinit();
-        return INIT_ERROR;
-    }
-    pthread_mutex_unlock(&statusMutex);
-    //Player init
-    if (Player_Init(&playerHandle))
-    {
-        Tuner_Deinit();
-        return INIT_ERROR;
-    }
-    //Player open source
-    if (Player_Source_Open(playerHandle, &sourceHandle))
-    {
-        Player_Deinit(playerHandle);
-        Tuner_Deinit();
-        return INIT_ERROR;
-    }
-}
-
-int32_t init_Parse_Pat()
-{
-    patTable = (PatTable*) malloc(sizeof (patTable));
-    patTable->patHeader = (PatHeader*) malloc(sizeof (PatHeader));
-    if (Demux_Set_Filter(playerHandle, 0x00, 0, &filterHandle))
-    {
-        Player_Source_Close(playerHandle, sourceHandle);
-        Player_Deinit(playerHandle);
-        Tuner_Deinit();
-        return INIT_ERROR;
-    }
-    if (Demux_Register_Section_Filter_Callback(pat_Table_Section_Filter_Callback))
-    {
-        Demux_Free_Filter(playerHandle, filterHandle);
-        Player_Source_Close(playerHandle, sourceHandle);
-        Player_Deinit(playerHandle);
-        Tuner_Deinit();
-        return INIT_ERROR;
-    }
-    
-}
-
-int32_t init_Parse_Pmt(int32_t service_number)
-{
-    pmtTable[service_number] = (PmtTable**) malloc(sizeof (PmtTable*)*patTable->serviceInfoCount);
-    pmtTable[service_number].pmtHeader = (PmtHeader*) malloc(sizeof (PmtHeader));
-    printf("PMT allocated\n\n");
-    Demux_Unregister_Section_Filter_Callback(pat_Table_Section_Filter_Callback);
-    Demux_Free_Filter(playerHandle, sourceHandle);
-    printf("PID: %d\n", patTable->patServiceInfoArray[service_number].pid);
-    if (Demux_Set_Filter(playerHandle, patTable->patServiceInfoArray[service_number].pid, 0x02, &filterHandle))
-    {
-        Player_Source_Close(playerHandle, sourceHandle);
-        Player_Deinit(playerHandle);
-        Tuner_Deinit();
-        return -1;
-    }
-    if(Demux_Register_Section_Filter_Callback(pmt_Table_Section_Filter_Callback)){
-      Demux_Free_Filter(playerHandle,filterHandle);
-      Player_Source_Close(playerHandle, sourceHandle);
-      Player_Deinit(playerHandle);
-      Tuner_Deinit();
-      return -1;
-    }
-}
 
 void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArray[], uint16_t section_length)
 {
@@ -207,10 +81,8 @@ void dumpPatHeader(PatHeader* patHeader)
 
 void parsePatTable(uint8_t *buffer, PatTable* table)
 {
-    parseHeader(buffer, table->patHeader);
-    dumpHeader(table->patHeader);
-    parseServiceInfoArray(buffer, table->patServiceInfoArray, table->patHeader->section_length);
-    dumpHeader(table->patHeader);
+    parsePatHeader(buffer, table->patHeader);
+    parsePatServiceInfoArray(buffer, table->patServiceInfoArray, table->patHeader->section_length);
     (*table).serviceInfoCount = (uint8_t) ((*(*table).patHeader).section_length - 10) / 4;
 }
 
@@ -222,7 +94,7 @@ void dumpServiceInfo(PatServiceInfo* patServiceInfo)
 void dumpPatTable(PatTable* table)
 {
     int i = 0;
-    dumpHeader((table->patHeader));
+    dumpPatHeader((table->patHeader));
     printf("\n<<<<<<<<<<<<<<<< Pat service info >>>>>>>>>>>>>\n");
     for (i = 0; i < table->serviceInfoCount; i++)
         dumpServiceInfo(&(table->patServiceInfoArray[i]));
@@ -237,7 +109,7 @@ void parsePmt(uint8_t *buffer, PmtTable* table)
 void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader)
 {
     (*pmtHeader).table_id = (uint8_t) (*(buffer + 0));
-    (*pmtHeader).section_syntax_indicator = (uint8_t) (*(buffer + 1) << 7);
+    (*pmtHeader).section_syntax_indicator = (uint8_t) (*(buffer + 1) >> 7);
     (*pmtHeader).section_length = (uint16_t) (((*(buffer + 1) << 8) + *(buffer + 2)) & 0x0FFF);
     (*pmtHeader).program_number = (uint16_t) ((*(buffer + 3) << 8) + *(buffer + 4));
     (*pmtHeader).version_number = (uint8_t) ((*(buffer + 5) >> 1) & 0x1F);
@@ -248,13 +120,14 @@ void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader)
     (*pmtHeader).program_info_length = (uint16_t) (((*(buffer + 9) << 8) + *(buffer + 10)) & 0x0FFF);
 }
 
-void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[MAX_NUM_OF_PIDS])
+void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[])
 {
     uint8_t section_length = (uint16_t) (((*(buffer + 1) << 8) + *(buffer + 2)) & 0x0FFF);
     uint16_t program_info_length = (uint16_t) (((*(buffer + 9) << 8) + *(buffer + 10)) & 0x0FFF);
     int kraj = section_length - 1;
     int poc = program_info_length + 3 + 9;
     int i = 0;
+    printf("poc: %d kraj %d\n",poc,kraj);
     for (i = 0; poc <= kraj; i++)
     {
         pmtServiceInfoArray[i].stream_type = (uint8_t) (*(buffer + poc));
@@ -269,7 +142,10 @@ void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArra
 
 void dumpPmtTable(PmtTable* pmtTable)
 {
+  int i=0;
+  printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<< PMT TABLE >>>>>>>>>>>>>>>>>>>>>>>>>>\n");
     printf("Table id: %d\n", pmtTable->pmtHeader->table_id);
+    printf("Service info count: %d\n",pmtTable->serviceInfoCount);
     printf("Section syntax indicator id: %d\n", pmtTable->pmtHeader->section_syntax_indicator);
     printf("section_length: %d\n", pmtTable->pmtHeader->section_length);
     printf("program_number: %d\n", pmtTable->pmtHeader->program_number);
@@ -279,5 +155,10 @@ void dumpPmtTable(PmtTable* pmtTable)
     printf("last_section_number: %d\n", pmtTable->pmtHeader->last_section_number);
     printf("pcr_pid: %d\n", pmtTable->pmtHeader->pcr_pid);
     printf("program_info_length: %d\n", pmtTable->pmtHeader->program_info_length);
+    for(i=0;i<pmtTable->serviceInfoCount;i++)
+    {
+      printf("Service Type: %d el_pid: %d es_info_length %d\n",pmtTable->pmtServiceInfoArray[i].stream_type,pmtTable->pmtServiceInfoArray[i].el_pid,pmtTable->pmtServiceInfoArray[i].es_info_length);
+    }
 }
+
 
