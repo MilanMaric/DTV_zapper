@@ -265,7 +265,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     for (i = 0; i < patTable->serviceInfoCount; i++)
     {
         indicator = i;
-        if (initPmtParsing(handle, patTable->patServiceInfoArray[i].pid,) == NO_ERROR)
+        if (initPmtParsing(handle, patTable->patServiceInfoArray[i].pid) == NO_ERROR)
             return ERROR;
     }
     return NO_ERROR;
@@ -280,7 +280,7 @@ void deviceDeInit(DeviceHandle *handle)
     Player_Deinit(handle->playerHandle);
     if (pmtTable != NULL)
     {
-        for (i = 0; i < patTable->serviceInfoCount; ++)
+        for (i = 0; i < patTable->serviceInfoCount;i++)
         {
             if (pmtTable[i]->pmtHeader != NULL)
                 free(pmtTable[i]->pmtHeader);

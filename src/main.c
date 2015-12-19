@@ -54,6 +54,6 @@ int32_t main(int32_t argc, char** argv)
 
     //deinitDirectFB();
     pthread_join(remote_thread, NULL);
-    deviceDeInit();
+    deviceDeInit(&handle);
     return 0;
 }
