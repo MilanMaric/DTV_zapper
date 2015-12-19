@@ -26,6 +26,7 @@ SOFTWARE.
 #include "tables.h"
 #include "remote.h"
 #include "config_parser.h"
+#include "device_control.h"
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
@@ -194,6 +195,8 @@ int32_t initPatParsing(DeviceHandle *handle)
 
 int deviceInit(config_parameters *parms, DeviceHandle *handle)
 {
+    static struct timespec lockStatusWaitTime;
+    static struct timeval now;
     printf("%s: started\n", __FUNCTION__);
     /*Initialize tuner device*/
     if (Tuner_Init())
@@ -256,11 +259,11 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         return ERROR;
     }
     printf("%s: Player_Stream_Create\n", __FUNCTION__);
-    if (initPatParsing())
+    if (initPatParsing(handle))
     {
         return ERROR;
     }
-    initPmtParsing(0, 0);
+    initPmtParsing(handle);
     return 0;
 }
 

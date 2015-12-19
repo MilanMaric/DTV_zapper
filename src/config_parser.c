@@ -82,7 +82,9 @@ int32_t parseConfig(config_parameters * parms, char* config_file_path)
         else if (strcmp(name, "vPID") == 0)
             sscanf(value, "%d", &(parms->vPid));
         else if (strcmp(name, "module") == 0)
-            strncpy(parms->module, value, MAX_VAL_LEN);
+        {
+            parms->module = str2TModule(value);
+        }
         else if (strcmp(name, "aType"))
         {
             parms->aType = str2AudioType(value);

@@ -30,10 +30,8 @@ SOFTWARE.
 #define MAX_VAL_LEN 10
 #define CONFIG_FILE_PATH "config.ini"
 #include "tdp_api.h"
-#include "tables.h"
 
-typedef struct config_parameters_s
-{
+typedef struct config_parameters_s {
     uint32_t frequency;
     uint32_t bandwidth;
     uint32_t aPid;

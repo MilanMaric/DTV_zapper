@@ -37,14 +37,14 @@ all: mm
 
 SRCS =  ./main.c
 SRCS += ./table_parser.c
-SRCS += ./init.c
+SRCS += ./device_control.c
 SRCS += ./remote.c
 SRCS += ./drawing.c
-SRCS += ./table_parser.c
+SRCS += ./config_parser.c
 
 mm:
 	$(CC) -o mm $(INCS) $(SRCS) $(CFLAGS) $(LIBS)
-	cp mm /home/student/pputvios1/ploca/mm
+#	cp mm /home/student/pputvios1/ploca/mm
     
 clean:
-	rm -f mm /home/student/pputvios1/ploca/mm
+	rm -f mm #/home/student/pputvios1/ploca/mm

@@ -25,6 +25,7 @@ SOFTWARE.
 #define TABLES_H_
 
 #include <stdint.h>
+#include "config_parser.h"
 
 #define MAX_NUM_OF_PIDS 20
 #define PARSING_ERROR -1
@@ -83,13 +84,7 @@ typedef struct _PmtTable
     uint8_t serviceInfoCount;
 } PmtTable;
 
-typedef struct _Handles
-{
-    uint32_t sourceHandle;
-    uint32_t playerHandle;
-    uint32_t filterHandle;
-    uint32_t streamHandle;
-} DeviceHandle;
+
 
 void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArray[], uint16_t section_length);
 void parsePatHeader(uint8_t *buffer, PatHeader* patHeader);
@@ -102,7 +97,6 @@ void dumpPmtTable(PmtTable* pmtTable);
 void dumpPatHeader(PatHeader* patHeader);
 void dumpPatServiceInfo(PatServiceInfo* patServiceInfo);
 
-int deviceInit(config_parameters *parms, DeviceHandle *handle);
-void deviceDeInit();
+
 
 #endif

@@ -39,20 +39,22 @@ static int screenHeight = 0;
 static DFBSurfaceDescription surfaceDesc;
 static int initialized = 0;
 
-void fillBlack() {
+void fillBlack()
+{
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
-            /*red*/ 0x00,
-            /*green*/ 0x00,
-            /*blue*/ 0x00,
-            /*alpha*/ 0xff));
+                               /*red*/ 0x00,
+                               /*green*/ 0x00,
+                               /*blue*/ 0x00,
+                               /*alpha*/ 0xff));
     primary->FillRectangle(/*surface to draw on*/ primary,
-            /*upper left x coordinate*/ 0,
-            /*upper left y coordinate*/ 0,
-            /*rectangle width*/ screenWidth,
-            /*rectangle height*/ screenHeight);
+                           /*upper left x coordinate*/ 0,
+                           /*upper left y coordinate*/ 0,
+                           /*rectangle width*/ screenWidth,
+                           /*rectangle height*/ screenHeight);
 }
 
-void initDirectFB() {
+void initDirectFB()
+{
     /* fetch the DirectFB interface */
     DFBCHECK(DirectFBCreate(&dfbInterface));
     /* tell the DirectFB to take the full screen for this application */
@@ -66,29 +68,32 @@ void initDirectFB() {
     fillBlack();
 }
 
-void deinitDirectFB() {
+void deinitDirectFB()
+{
     primary->Release(primary);
     dfbInterface->Release(dfbInterface);
 }
 
-void timerFunction() {
+void timerFunction()
+{
     fillBlack();
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
-            /*red*/ 0x00,
-            /*green*/ 0x00,
-            /*blue*/ 0x00,
-            /*alpha*/ 0xff));
+                               /*red*/ 0x00,
+                               /*green*/ 0x00,
+                               /*blue*/ 0x00,
+                               /*alpha*/ 0xff));
     DFBCHECK(primary->FillRectangle(/*surface to draw on*/ primary,
-            /*upper left x coordinate*/ 0,
-            /*upper left y coordinate*/ 0,
-            /*rectangle width*/ screenWidth,
-            /*rectangle height*/ screenHeight));
+                                    /*upper left x coordinate*/ 0,
+                                    /*upper left y coordinate*/ 0,
+                                    /*rectangle width*/ screenWidth,
+                                    /*rectangle height*/ screenHeight));
     primary->Flip(primary,
-            /*region to be updated, NULL for the whole surface*/NULL,
-            /*flip flags*/0);
+                  /*region to be updated, NULL for the whole surface*/NULL,
+                  /*flip flags*/0);
 }
 
-void setTimer(int32_t interval) {
+void setTimer(int32_t interval)
+{
     struct sigevent signalEvent;
     timer_t timerId;
     //reći OS-u da notifikaciju šalje prozivanjem specificirane funkcije iz posebne niti
@@ -100,8 +105,8 @@ void setTimer(int32_t interval) {
     //atributi niti - if NULL default attributes are applied
     signalEvent.sigev_notify_attributes = NULL;
     timer_create(/*sistemski sat za merenje vremena*/ CLOCK_REALTIME,
-            /*podešavanja timer-a*/ &signalEvent,
-            /*mesto gde će se smestiti ID novog timer-a*/ &timerId);
+                 /*podešavanja timer-a*/ &signalEvent,
+                 /*mesto gde će se smestiti ID novog timer-a*/ &timerId);
 
     struct itimerspec timerSpec;
     struct itimerspec timerSpecOld;
@@ -115,7 +120,8 @@ void setTimer(int32_t interval) {
     timerSpec.it_value.tv_nsec = 0;
 }
 
-void drawTextInfo(int32_t service_number) {
+void drawTextInfo(int32_t service_number)
+{
     char buffer[5];
     sprintf(buffer, "%d", service_number);
 
@@ -128,14 +134,14 @@ void drawTextInfo(int32_t service_number) {
 
     DFBCHECK(primary->SetColor(primary, 0xff, 0x80, 0x80, 0xff));
     DFBCHECK(primary->DrawString(primary,
-            /*text to be drawn*/ buffer,
-            /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
-            /*x coordinate of the lower left corner of the resulting text*/ 500,
-            /*y coordinate of the lower left corner of the resulting text*/ 500,
-            /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
+                                 /*text to be drawn*/ buffer,
+                                 /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
+                                 /*x coordinate of the lower left corner of the resulting text*/ 500,
+                                 /*y coordinate of the lower left corner of the resulting text*/ 500,
+                                 /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
     primary->Flip(primary,
-            /*region to be updated, NULL for the whole surface*/NULL,
-            /*flip flags*/0);
+                  /*region to be updated, NULL for the whole surface*/NULL,
+                  /*flip flags*/0);
 
 }
 

@@ -30,6 +30,7 @@ SOFTWARE.
 #include "tables.h"
 #include "remote.h"
 #include "config_parser.h"
+#include "device_control.h"
 
 int32_t main(int32_t argc, char** argv)
 {
