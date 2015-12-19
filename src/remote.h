@@ -54,10 +54,6 @@ SOFTWARE.
 #define REMOTE_BTN_INFO 358
 #define REMOTE_BTN_EXIT 102
 
-/* error codes */
-#define NO_ERROR 		0
-#define ERROR			1
-
 
 int32_t getKeys(int32_t count, uint8_t* buf, int32_t* eventRead);
 

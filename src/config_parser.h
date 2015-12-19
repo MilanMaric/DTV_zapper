@@ -21,38 +21,35 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-#include <stdio.h>
-#include <directfb.h>
-#include <pthread.h>
-#include <stdint.h>
-#include "remote.h"
-#include "drawing.h"
+
+#ifndef CONFIG_PARSER_H
+#define	CONFIG_PARSER_H
+
+
+#define MAXLEN 80
+#define MAX_VAL_LEN 10
+#define CONFIG_FILE_PATH "config.ini"
+#include "tdp_api.h"
 #include "tables.h"
-#include "remote.h"
-#include "config_parser.h"
 
-int32_t main(int32_t argc, char** argv)
+typedef struct config_parameters_s
 {
-    DeviceHandle handle;
-    config_parameters parms;
-    /* initialize DirectFB */
-    //  DFBCHECK(DirectFBInit(&argc, &argv));
-    // initDirectFB();
-    if (parseConfig(&parms, argv[1]) == ERROR)
-    {
-        printf("%s : ERROR while parsing configuration\n", __FUNCTION__);
-        return ERROR;
-    }
-    pthread_t remote_thread;
-    pthread_create(&remote_thread, NULL, &remote_control_thread, NULL);
-    if (deviceInit(&parms, &handle) == ERROR)
-    {
-        printf("%s : ERROR while init \n", __FUNCTION__);
-        return ERROR;
-    }
-
-    //deinitDirectFB();
-    pthread_join(remote_thread, NULL);
-    deviceDeInit();
-    return 0;
+    uint32_t frequency;
+    uint32_t bandwidth;
+    uint32_t aPid;
+    uint32_t vPid;
+    t_Module module;
+    tStreamType aType;
+    tStreamType vType;
 }
+config_parameters;
+
+int32_t parseConfig(config_parameters * parms, char* config_file_path);
+void dumpConfig(const config_parameters * const parms);
+void initDefaultValues(config_parameters* parms);
+tStreamType str2AudioType(char* aType);
+tStreamType str2VideoType(char* vType);
+t_Module str2TModule(char* module);
+
+#endif	/* CONFIG_PARSER_H */
+

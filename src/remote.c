@@ -32,9 +32,11 @@ SOFTWARE.
 #include <errno.h>
 #include <pthread.h>
 #include "drawing.h"
+#include "tdp_api.h"
 
 static int32_t inputFileDesc;
 // 
+
 void* remote_control_thread(void* nn)
 {
     const char* dev = "/dev/input/event0";

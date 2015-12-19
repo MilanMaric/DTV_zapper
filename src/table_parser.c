@@ -20,6 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+ /home/milan/etf/pero/7. semestar/Multimedijalni sistemi/RTRK/vezbe/tdp_api
  */
 #include "tables.h"
 #include "remote.h"
@@ -52,7 +53,6 @@ void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArra
     }
 }
 
-
 void parsePatHeader(uint8_t *buffer, PatHeader* patHeader)
 {
     (*patHeader).table_id = (uint8_t) (*(buffer + 0));
@@ -64,7 +64,6 @@ void parsePatHeader(uint8_t *buffer, PatHeader* patHeader)
     (*patHeader).section_number = (uint8_t) (*(buffer + 6));
     (*patHeader).last_section_number = (uint8_t) (*(buffer + 6));
 }
-
 
 void dumpPatHeader(PatHeader* patHeader)
 {
@@ -86,7 +85,7 @@ void parsePatTable(uint8_t *buffer, PatTable* table)
     (*table).serviceInfoCount = (uint8_t) ((*(*table).patHeader).section_length - 10) / 4;
 }
 
-void dumpServiceInfo(PatServiceInfo* patServiceInfo)
+void dumpPatServiceInfo(PatServiceInfo* patServiceInfo)
 {
     printf("Program number: %d,pid: %d\n", patServiceInfo->program_number, patServiceInfo->pid);
 }
@@ -97,13 +96,13 @@ void dumpPatTable(PatTable* table)
     dumpPatHeader((table->patHeader));
     printf("\n<<<<<<<<<<<<<<<< Pat service info >>>>>>>>>>>>>\n");
     for (i = 0; i < table->serviceInfoCount; i++)
-        dumpServiceInfo(&(table->patServiceInfoArray[i]));
+        dumpPatServiceInfo(&(table->patServiceInfoArray[i]));
 }
 
 void parsePmt(uint8_t *buffer, PmtTable* table)
 {
     parsePmtHeader(buffer, table->pmtHeader);
-    parsePmtServiceInfoArray(buffer, table->pmtServiceInfoArray);
+    parsePmtServiceInfoArray(buffer, table->pmtServiceInfoArray, &((*table).serviceInfoCount));
 }
 
 void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader)
@@ -115,20 +114,19 @@ void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader)
     (*pmtHeader).version_number = (uint8_t) ((*(buffer + 5) >> 1) & 0x1F);
     (*pmtHeader).current_next_indicator = (uint8_t) (*(buffer + 5) & 0x01);
     (*pmtHeader).section_number = (uint8_t) (*(buffer + 6));
-    (*pmtHeader).last_section_number = (uint8_t) (*(buffer + 6));
-    (*pmtHeader).pcr_pid = (uint16_t) (((*(buffer + 7) << 8) + *(buffer + 8)) & 0x1FFF);
-    (*pmtHeader).program_info_length = (uint16_t) (((*(buffer + 9) << 8) + *(buffer + 10)) & 0x0FFF);
+    (*pmtHeader).last_section_number = (uint8_t) (*(buffer + 7));
+    (*pmtHeader).pcr_pid = (uint16_t) (((*(buffer + 8) << 8) + *(buffer + 9)) & 0x1FFF);
+    (*pmtHeader).program_info_length = (uint16_t) (((*(buffer + 10) << 8) + *(buffer + 11)) & 0x0FFF);
 }
 
-void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[])
+void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[], uint8_t* broj)
 {
     uint8_t section_length = (uint16_t) (((*(buffer + 1) << 8) + *(buffer + 2)) & 0x0FFF);
-    uint16_t program_info_length = (uint16_t) (((*(buffer + 9) << 8) + *(buffer + 10)) & 0x0FFF);
+    uint16_t program_info_length = (uint16_t) (((*(buffer + 10) << 8) + *(buffer + 11)) & 0x0FFF);
     int kraj = section_length - 1;
     int poc = program_info_length + 3 + 9;
     int i = 0;
-    printf("poc: %d kraj %d\n",poc,kraj);
-    for (i = 0; poc <= kraj; i++)
+    for (i = 0; poc < kraj; i++)
     {
         pmtServiceInfoArray[i].stream_type = (uint8_t) (*(buffer + poc));
         poc++;
@@ -138,14 +136,15 @@ void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArra
         poc += 2;
         poc += pmtServiceInfoArray[i].es_info_length;
     }
+    *broj = i;
 }
 
 void dumpPmtTable(PmtTable* pmtTable)
 {
-  int i=0;
-  printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<< PMT TABLE >>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+    int i = 0;
+    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<< PMT TABLE >>>>>>>>>>>>>>>>>>>>>>>>>>\n");
     printf("Table id: %d\n", pmtTable->pmtHeader->table_id);
-    printf("Service info count: %d\n",pmtTable->serviceInfoCount);
+    printf("Service info count: %d\n", pmtTable->serviceInfoCount);
     printf("Section syntax indicator id: %d\n", pmtTable->pmtHeader->section_syntax_indicator);
     printf("section_length: %d\n", pmtTable->pmtHeader->section_length);
     printf("program_number: %d\n", pmtTable->pmtHeader->program_number);
@@ -155,9 +154,9 @@ void dumpPmtTable(PmtTable* pmtTable)
     printf("last_section_number: %d\n", pmtTable->pmtHeader->last_section_number);
     printf("pcr_pid: %d\n", pmtTable->pmtHeader->pcr_pid);
     printf("program_info_length: %d\n", pmtTable->pmtHeader->program_info_length);
-    for(i=0;i<pmtTable->serviceInfoCount;i++)
+    for (i = 0; i < pmtTable->serviceInfoCount; i++)
     {
-      printf("Service Type: %d el_pid: %d es_info_length %d\n",pmtTable->pmtServiceInfoArray[i].stream_type,pmtTable->pmtServiceInfoArray[i].el_pid,pmtTable->pmtServiceInfoArray[i].es_info_length);
+        printf("Service Type: %d el_pid: %d es_info_length %d\n", pmtTable->pmtServiceInfoArray[i].stream_type, pmtTable->pmtServiceInfoArray[i].el_pid, pmtTable->pmtServiceInfoArray[i].es_info_length);
     }
 }
 

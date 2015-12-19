@@ -40,6 +40,7 @@ SRCS += ./table_parser.c
 SRCS += ./init.c
 SRCS += ./remote.c
 SRCS += ./drawing.c
+SRCS += ./table_parser.c
 
 mm:
 	$(CC) -o mm $(INCS) $(SRCS) $(CFLAGS) $(LIBS)

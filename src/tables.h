@@ -30,12 +30,6 @@ SOFTWARE.
 #define PARSING_ERROR -1
 #define INIT_ERROR -1
 
-// Default values
-#define DESIRED_FREQUENCY 818000000	/* Tune frequency in Hz */
-#define BANDWIDTH 8    				/* Bandwidth in Mhz */
-#define VIDEO_PID 101				/* Channel video pid */
-#define AUDIO_PID 103				/* Channel audio pid */
-
 typedef struct _PatHeader
 {
     uint8_t table_id;
@@ -89,20 +83,26 @@ typedef struct _PmtTable
     uint8_t serviceInfoCount;
 } PmtTable;
 
+typedef struct _Handles
+{
+    uint32_t sourceHandle;
+    uint32_t playerHandle;
+    uint32_t filterHandle;
+    uint32_t streamHandle;
+} DeviceHandle;
 
 void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArray[], uint16_t section_length);
 void parsePatHeader(uint8_t *buffer, PatHeader* patHeader);
-void dumpPatHeader(PatHeader* patHeader);
 void parsePatTable(uint8_t *buffer, PatTable* table);
-void dumpServiceInfo(PatServiceInfo* patServiceInfo);
-void dumpPatTable(PatTable* table);
 void parsePmt(uint8_t *buffer, PmtTable* table);
 void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader);
-void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[]);
+void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[], uint8_t* broj);
+void dumpPatTable(PatTable* table);
 void dumpPmtTable(PmtTable* pmtTable);
+void dumpPatHeader(PatHeader* patHeader);
+void dumpPatServiceInfo(PatServiceInfo* patServiceInfo);
 
-
-int deviceInit();
+int deviceInit(config_parameters *parms, DeviceHandle *handle);
 void deviceDeInit();
 
 #endif
