@@ -17,7 +17,7 @@ typedef struct _Handles
 } DeviceHandle;
 
 int deviceInit(config_parameters *parms, DeviceHandle *handle);
-void deviceDeInit();
+void deviceDeInit(DeviceHandle *handle);
 
 #endif	/* DEVICE_CONTROL_H */
 

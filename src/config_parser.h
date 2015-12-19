@@ -31,7 +31,8 @@ SOFTWARE.
 #define CONFIG_FILE_PATH "config.ini"
 #include "tdp_api.h"
 
-typedef struct config_parameters_s {
+typedef struct config_parameters_s
+{
     uint32_t frequency;
     uint32_t bandwidth;
     uint32_t aPid;
@@ -45,6 +46,7 @@ config_parameters;
 int32_t parseConfig(config_parameters * parms, char* config_file_path);
 void dumpConfig(const config_parameters * const parms);
 void initDefaultValues(config_parameters* parms);
+
 tStreamType str2AudioType(char* aType);
 tStreamType str2VideoType(char* vType);
 t_Module str2TModule(char* module);
