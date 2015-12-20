@@ -51,7 +51,7 @@ int32_t main(int32_t argc, char** argv)
         printf("%s : ERROR while init \n", __FUNCTION__);
         return ERROR;
     }
-
+    
     //deinitDirectFB();
     pthread_join(remote_thread, NULL);
     deviceDeInit(&handle);

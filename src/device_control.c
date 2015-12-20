@@ -280,7 +280,7 @@ void deviceDeInit(DeviceHandle *handle)
     Player_Deinit(handle->playerHandle);
     if (pmtTable != NULL)
     {
-        for (i = 0; i < patTable->serviceInfoCount;i++)
+        for (i = 0; i < patTable->serviceInfoCount; i++)
         {
             if (pmtTable[i]->pmtHeader != NULL)
                 free(pmtTable[i]->pmtHeader);
@@ -296,4 +296,7 @@ void deviceDeInit(DeviceHandle *handle)
     }
 }
 
-
+uint32_t remoteCallback(uint16_t service_number)
+{
+    dumpPmtTable(pmtTable[service_number]);
+}

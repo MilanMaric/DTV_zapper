@@ -18,6 +18,6 @@ typedef struct _Handles
 
 int deviceInit(config_parameters *parms, DeviceHandle *handle);
 void deviceDeInit(DeviceHandle *handle);
-
+uint32_t remoteCallback(uint16_t service_number);
 #endif	/* DEVICE_CONTROL_H */
 

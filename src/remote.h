@@ -54,8 +54,9 @@ SOFTWARE.
 #define REMOTE_BTN_INFO 358
 #define REMOTE_BTN_EXIT 102
 
+typedef int32_t(*Remote_Control_Callback)(uint32_t status);
 
-int32_t getKeys(int32_t count, uint8_t* buf, int32_t* eventRead);
+void registerRemoteCallBacks(Remote_Control_Callback remoteControllCallback);
 
 void* remote_control_thread(void*);
 
