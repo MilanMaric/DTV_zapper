@@ -44,11 +44,12 @@ static pthread_mutex_t patMutex = PTHREAD_MUTEX_INITIALIZER;
 
 static pthread_cond_t pmtCondition = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t pmtMutex = PTHREAD_MUTEX_INITIALIZER;
+static uint8_t parsedTag = 0;
 
 PatTable* patTable;
 PmtTable** pmtTable;
 
-int32_t indicator;
+int32_t indicator = 0;
 
 int32_t tunerStatusCallback(t_LockStatus status)
 {
@@ -268,12 +269,14 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         if (initPmtParsing(handle, patTable->patServiceInfoArray[i].pid) == NO_ERROR)
             return ERROR;
     }
+    parsedTag = 1;
     return NO_ERROR;
 }
 
 void deviceDeInit(DeviceHandle *handle)
 {
     int i = 0;
+    parsedTag = 0;
     Player_Stream_Remove(handle->playerHandle, handle->sourceHandle, handle->streamHandle);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
     Player_Source_Close(handle->playerHandle, handle->sourceHandle);
@@ -297,10 +300,27 @@ void deviceDeInit(DeviceHandle *handle)
     }
 }
 
-uint32_t remoteCallback(uint16_t service_number)
+uint32_t remoteServiceCallback(uint16_t service_number)
 {
+    if (parsedTag == 0)
+    {
+        printf("%s:Pmt sections are not ready yet!!!", __FUNCTION__);
+        return ERROR;
+    }
     if (service_number > 0 && service_number < patTable->serviceInfoCount)
         dumpPmtTable(pmtTable[service_number]);
-    
     return NO_ERROR;
+}
+
+uint32_t remoteVolumeCallback(uint16_t service)
+{
+    if (service == VOLUME_PLUS)
+        printf("Volume plus");
+    if (service == VOLUME_MINUS)
+        printf("Volume minus");
+}
+
+uint8_t getParsedTag()
+{
+    return parsedTag;
 }

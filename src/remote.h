@@ -46,21 +46,25 @@ typedef enum remoteButton_Code
     REMOTE_BTN_TEXT = 371,
     REMOTE_BTN_SUBT = 370,
     REMOTE_BTN_AUDIO = 392,
-
-    REMOTE_BTN_V_PLUS = 63,
-    REMOTE_BTN_V_MINUS = 64,
-    REMOTE_BTN_P_PLUS = 62,
-    REMOTE_BTN_P_MINUS = 61,
-
+    REMOTE_BTN_VOLUME_PLUS = 63,
+    REMOTE_BTN_VOLUME_MINUS = 64,
+    REMOTE_BTN_PROGRAM_PLUS = 62,
+    REMOTE_BTN_PROGRAM_MINUS = 61,
     REMOTE_BTN_INFO = 358,
     REMOTE_BTN_EXIT = 102
 } remoteButtonCode;
 
+typedef enum
+{
+    VOLUME_PLUS = 1,
+    VOLUME_MINUS
+} RemoteVolumeCode;
 
-typedef int32_t(*Remote_Control_Callback)(uint32_t status);
+typedef int32_t(*Remote_Control_Callback)(uint32_t code);
 
-void registerRemoteCallBacks(Remote_Control_Callback remoteControllCallback);
+void registerRemoteCallback(Remote_Control_Callback remoteControllCallback);
+void registerVolumeRemoteCallback(Remote_Control_Callback remoteControllCallback);
 
-void* remote_control_thread(void*);
+void* remoteControlThread(void*);
 
 #endif

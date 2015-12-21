@@ -45,7 +45,7 @@ int32_t main(int32_t argc, char** argv)
         return ERROR;
     }
     pthread_t remote_thread;
-    pthread_create(&remote_thread, NULL, &remote_control_thread, NULL);
+    pthread_create(&remote_thread, NULL, &remoteControlThread, NULL);
     if (deviceInit(&parms, &handle) == ERROR)
     {
         printf("%s : ERROR while init \n", __FUNCTION__);

@@ -35,17 +35,22 @@ SOFTWARE.
 #include "tdp_api.h"
 
 static int32_t inputFileDesc;
-static Remote_Control_Callback callback;
+static Remote_Control_Callback sectionNumberCallback;
+static Remote_Control_Callback volumeCallback;
 
 int32_t getKeys(int32_t count, uint8_t* buf, int32_t* eventRead);
 
-
-void registerRemoteCallBack(Remote_Control_Callback remoteControllCallback)
+void registerServiceNumberRemoteCallBack(Remote_Control_Callback remoteControllCallback)
 {
-    callback = remoteControllCallback;
+    sectionNumberCallback = remoteControllCallback;
 }
 
-void* remote_control_thread(void* nn)
+void registerVolumeRemoteCallback(Remote_Control_Callback remoteControllCallback)
+{
+    volumeCallback = remoteControllCallback;
+}
+
+void* remoteControlThread(void* nn)
 {
     const char* dev = "/dev/input/event0";
     char deviceName[20];
@@ -85,26 +90,34 @@ void* remote_control_thread(void* nn)
             {
                 switch (eventBuf[i].code)
                 {
-                case REMOTE_BTN_P_PLUS:
+                case REMOTE_BTN_PROGRAM_PLUS:
                     service_number++;
                     break;
-                case REMOTE_BTN_P_MINUS:
+                case REMOTE_BTN_PROGRAM_MINUS:
                     if (service_number != 0) service_number--;
                     break;
+                case REMOTE_BTN_VOLUME_PLUS:
+                    if (volumeCallback != NULL)
+                        volumeCallback(VOLUME_PLUS);
+                    break;
+                case REMOTE_BTN_VOLUME_MINUS:
+                    if (volumeCallback != NULL)
+                        volumeCallback(VOLUME_MINUS);
+                    break;
                 case REMOTE_BTN_INFO:
-                    drawTextInfo(service_number);
                     break;
                 case REMOTE_BTN_EXIT:
                     return;
                 default:
-                    tmp_number = remote_check_service_number(eventBuf[i].code);
+                    tmp_number = remoteCheckServiceNumberCode(eventBuf[i].code);
                     if (tmp_number != -1)
                     {
                         service_number = tmp_number;
                     }
                 }
                 printf("Service number: %d\n", service_number);
-                callback(service_number);
+                if (sectionNumberCallback != NULL)
+                    sectionNumberCallback(service_number);
             }
 
         }
@@ -112,7 +125,7 @@ void* remote_control_thread(void* nn)
     free(eventBuf);
 }
 
-int32_t remote_check_service_number(int32_t code)
+int32_t remoteCheckServiceNumberCode(int32_t code)
 {
     int32_t service_number = -1;
     switch (code)
