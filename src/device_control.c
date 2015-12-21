@@ -278,6 +278,7 @@ void deviceDeInit(DeviceHandle *handle)
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
     Player_Source_Close(handle->playerHandle, handle->sourceHandle);
     Player_Deinit(handle->playerHandle);
+    Tuner_Deinit();
     if (pmtTable != NULL)
     {
         for (i = 0; i < patTable->serviceInfoCount; i++)
@@ -299,4 +300,5 @@ void deviceDeInit(DeviceHandle *handle)
 uint32_t remoteCallback(uint16_t service_number)
 {
     dumpPmtTable(pmtTable[service_number]);
+    
 }

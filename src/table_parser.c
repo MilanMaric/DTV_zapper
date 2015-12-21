@@ -20,7 +20,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- /home/milan/etf/pero/7. semestar/Multimedijalni sistemi/RTRK/vezbe/tdp_api
  */
 #include "tables.h"
 #include "remote.h"
@@ -102,7 +101,7 @@ void dumpPatTable(PatTable* table)
 void parsePmt(uint8_t *buffer, PmtTable* table)
 {
     parsePmtHeader(buffer, table->pmtHeader);
-    parsePmtServiceInfoArray(buffer, table->pmtServiceInfoArray, &((*table).serviceInfoCount));
+    parsePmtServiceInfoArray(buffer, table->pmtServiceInfoArray, &((*table).streamCount));
 }
 
 void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader)
@@ -144,7 +143,7 @@ void dumpPmtTable(PmtTable* pmtTable)
     int i = 0;
     printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<< PMT TABLE >>>>>>>>>>>>>>>>>>>>>>>>>>\n");
     printf("Table id: %d\n", pmtTable->pmtHeader->table_id);
-    printf("Service info count: %d\n", pmtTable->serviceInfoCount);
+    printf("Service info count: %d\n", pmtTable->streamCount);
     printf("Section syntax indicator id: %d\n", pmtTable->pmtHeader->section_syntax_indicator);
     printf("section_length: %d\n", pmtTable->pmtHeader->section_length);
     printf("program_number: %d\n", pmtTable->pmtHeader->program_number);
@@ -154,7 +153,7 @@ void dumpPmtTable(PmtTable* pmtTable)
     printf("last_section_number: %d\n", pmtTable->pmtHeader->last_section_number);
     printf("pcr_pid: %d\n", pmtTable->pmtHeader->pcr_pid);
     printf("program_info_length: %d\n", pmtTable->pmtHeader->program_info_length);
-    for (i = 0; i < pmtTable->serviceInfoCount; i++)
+    for (i = 0; i < pmtTable->streamCount; i++)
     {
         printf("Service Type: %d el_pid: %d es_info_length %d\n", pmtTable->pmtServiceInfoArray[i].stream_type, pmtTable->pmtServiceInfoArray[i].el_pid, pmtTable->pmtServiceInfoArray[i].es_info_length);
     }

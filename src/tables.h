@@ -81,7 +81,7 @@ typedef struct _PmtTable
 {
     PmtHeader* pmtHeader;
     PmtServiceInfo pmtServiceInfoArray[MAX_NUM_OF_PIDS];
-    uint8_t serviceInfoCount;
+    uint8_t streamCount;
 } PmtTable;
 
 
