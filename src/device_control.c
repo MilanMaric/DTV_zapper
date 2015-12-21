@@ -299,6 +299,8 @@ void deviceDeInit(DeviceHandle *handle)
 
 uint32_t remoteCallback(uint16_t service_number)
 {
-    dumpPmtTable(pmtTable[service_number]);
+    if (service_number > 0 && service_number < patTable->serviceInfoCount)
+        dumpPmtTable(pmtTable[service_number]);
     
+    return NO_ERROR;
 }
