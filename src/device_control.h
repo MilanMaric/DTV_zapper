@@ -30,7 +30,8 @@ typedef struct _Handles
     uint32_t sourceHandle;
     uint32_t playerHandle;
     uint32_t filterHandle;
-    uint32_t streamHandle;
+    uint32_t vStreamHandle;
+    uint32_t aStreamHandle;
 } DeviceHandle;
 
 int deviceInit(config_parameters *parms, DeviceHandle *handle);

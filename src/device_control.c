@@ -261,7 +261,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     }
     printf("%s: Player_Source_Open\n", __FUNCTION__);
 
-    if (Player_Stream_Create(handle->playerHandle, handle->sourceHandle, parms->vPid, parms->vType, &handle->streamHandle))
+    if (Player_Stream_Create(handle->playerHandle, handle->sourceHandle, parms->vPid, parms->vType, &handle->vStreamHandle))
     {
         printf("%s Player_Source_Open failed", __FUNCTION__);
         Player_Source_Close(handle->playerHandle, handle->sourceHandle);
@@ -296,7 +296,7 @@ void deviceDeInit(DeviceHandle *handle)
 {
     int i = 0;
     parsedTag = 0;
-    Player_Stream_Remove(handle->playerHandle, handle->sourceHandle, handle->streamHandle);
+    Player_Stream_Remove(handle->playerHandle, handle->sourceHandle, handle->vStreamHandle);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
     Player_Source_Close(handle->playerHandle, handle->sourceHandle);
     Player_Deinit(handle->playerHandle);
@@ -335,9 +335,12 @@ int32_t remoteServiceCallback(uint32_t service_number)
             }
         }
         printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
-        Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->streamHandle);
+        //Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle);
         printf("Stream removed\n");
-        Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->streamHandle));
+        if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->vStreamHandle)))
+        {
+            printf("Player stream not created\n");
+        }
         printf("Steam created\n");
     }
     else

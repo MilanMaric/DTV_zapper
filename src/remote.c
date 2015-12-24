@@ -83,7 +83,7 @@ void* remoteControlThread(void* nn)
             printf("Error while reading input events !");
             return;
         }
-
+        tmp_number = service_number;
         for (i = 0; i < eventCnt; i++)
         {
             if (eventBuf[i].value == 1 && eventBuf[i].type == 1)
@@ -116,8 +116,9 @@ void* remoteControlThread(void* nn)
                     }
                 }
                 printf("Service number: %d\n", service_number);
-                if (sectionNumberCallback != NULL)
+                if (sectionNumberCallback != NULL && tmp_number != service_number)
                     sectionNumberCallback(service_number);
+                tmp_number = service_number;
             }
 
         }
