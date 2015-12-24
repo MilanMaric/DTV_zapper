@@ -100,16 +100,18 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
     static struct timespec lockStatusWaitTime;
     static struct timeval now;
     printf("%s: started\n", __FUNCTION__);
-    if(pmtTable==NULL){
-      pmtTable=(PmtTable**) malloc(patTable->serviceInfoCount*sizeof(PmtTable*));
-	printf("%s : pmt allocated\n",__FUNCTION__);
+    if (pmtTable == NULL)
+    {
+        pmtTable = (PmtTable**) malloc(patTable->serviceInfoCount * sizeof (PmtTable*));
+        printf("%s : pmt allocated\n", __FUNCTION__);
     }
-    if(pmtTable==NULL)
-      return ERROR;
+    if (pmtTable == NULL)
+        return ERROR;
     printf("PID: %d\n", patTable->patServiceInfoArray[1].pid);
-    if(pmtTable[indicator]==NULL){
-printf("%s : ERROR pmtTable[%d] is null",__FUNCTION__,indicator);
-return ERROR;
+    if (pmtTable[indicator] == NULL)
+    {
+        printf("%s : ERROR pmtTable[%d] is null", __FUNCTION__, indicator);
+        return ERROR;
     }
     gettimeofday(&now, NULL);
     lockStatusWaitTime.tv_sec = now.tv_sec + 10;
@@ -118,7 +120,7 @@ return ERROR;
         printf("\n%s:ERROR Set filter failure!\n", __FUNCTION__);
         return ERROR;
     }
-    printf("%s : pmt set filter\n",__FUNCTION__);
+    printf("%s : pmt set filter\n", __FUNCTION__);
 
     if (Demux_Register_Section_Filter_Callback(pmt_Demux_Section_Filter_Callback))
     {
@@ -126,7 +128,7 @@ return ERROR;
         Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
         return ERROR;
     }
-    printf("%s : pmt register section filter\n",__FUNCTION__);
+    printf("%s : pmt register section filter\n", __FUNCTION__);
 
     pthread_mutex_lock(&pmtMutex);
     if (ETIMEDOUT == pthread_cond_timedwait(&pmtCondition, &pmtMutex, &lockStatusWaitTime))
@@ -136,12 +138,12 @@ return ERROR;
         return ERROR;
     }
     pthread_mutex_unlock(&pmtMutex);
-    printf("%s : pmt parsed\n",__FUNCTION__);
+    printf("%s : pmt parsed\n", __FUNCTION__);
     dumpPmtTable(pmtTable[indicator]);
     Demux_Unregister_Section_Filter_Callback(pmt_Demux_Section_Filter_Callback);
-    printf("%s : pmt section filter unregistered\n",__FUNCTION__);
+    printf("%s : pmt section filter unregistered\n", __FUNCTION__);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
-    printf("%s : filter free\n",__FUNCTION__);
+    printf("%s : filter free\n", __FUNCTION__);
     printf("%s ended", __FUNCTION__);
     return NO_ERROR;
 }
@@ -220,7 +222,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     {
         printf("\n%s : ERROR Tuner_Register_Status_Callback() fail\n", __FUNCTION__);
     }
-    printf("%s: After Tuner_Register_Status_Callback(tunerStatusCallback) %u\n", __FUNCTION__,freqHz);
+    printf("%s: After Tuner_Register_Status_Callback(tunerStatusCallback) %u\n", __FUNCTION__, freqHz);
     /*Lock to frequency*/
     if (!Tuner_Lock_To_Frequency(freqHz, parms->bandwidth, parms->module))
     {
@@ -272,19 +274,20 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     {
         return ERROR;
     }
-    pmtTable=(PmtTable**) malloc(patTable->serviceInfoCount*sizeof(PmtTable*));
+    pmtTable = (PmtTable**) malloc(patTable->serviceInfoCount * sizeof (PmtTable*));
     for (i = 1; i < patTable->serviceInfoCount; i++)
     {
         indicator = i;
-	pmtTable[i]=(PmtTable*) malloc(sizeof(PmtTable));
-	pmtTable[i]->pmtHeader=(PmtHeader*) malloc(sizeof(PmtHeader));
-	  printf("pmt table %d\n",i);
-        if (initPmtParsing(handle, patTable->patServiceInfoArray[i].pid) != NO_ERROR){
-	  deviceDeInit(handle);
+        pmtTable[i] = (PmtTable*) malloc(sizeof (PmtTable));
+        pmtTable[i]->pmtHeader = (PmtHeader*) malloc(sizeof (PmtHeader));
+        printf("pmt table %d\n", i);
+        if (initPmtParsing(handle, patTable->patServiceInfoArray[i].pid) != NO_ERROR)
+        {
+            deviceDeInit(handle);
             return ERROR;
-	}
+        }
     }
-    globHandle=handle;
+    globHandle = handle;
     parsedTag = 1;
     return NO_ERROR;
 }
@@ -302,38 +305,44 @@ void deviceDeInit(DeviceHandle *handle)
 
 int32_t remoteServiceCallback(uint32_t service_number)
 {
-  uint16_t vpid=0;
-  uint8_t vtype=0;
-  uint8_t atype=0;
-  uint16_t apid=0;
-  uint8_t type=0;
-  int16_t i=0;
+    uint16_t vpid = 0;
+    uint8_t vtype = 0;
+    uint8_t atype = 0;
+    uint16_t apid = 0;
+    uint8_t type = 0;
+    int16_t i = 0;
     if (parsedTag == 0)
     {
         printf("%s:Pmt sections are not ready yet!!!", __FUNCTION__);
         return ERROR;
     }
-    if (service_number > 0 && service_number < patTable->serviceInfoCount){
+    if (service_number > 0 && service_number < patTable->serviceInfoCount)
+    {
         dumpPmtTable(pmtTable[service_number]);
-	for(i=0;i<pmtTable[service_number]->streamCount;i++){
-	  type=pmtTable[service_number]->pmtServiceInfoArray[i].stream_type;
-	  printf("type: %d,",type);
-	  if(type==0x01||type==0x02){
-	    vpid=pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
-	    vtype=type;
-	  }
-	  if(type==0x03||type==0x04){
-	    apid=pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
-	    atype=type;
-	  }
-	}
-	 printf("\n\n Vtype:%d Vpid:%d\n",vtype,vpid);
-	  Player_Stream_Remove(globHandle->playerHandle,globHandle->sourceHandle,globHandle->streamHandle);
-	  printf("Stream removed\n");
-	  Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->streamHandle));
-	  printf("Steam created");
-    }else{
-      printf("No!\n");
+        for (i = 0; i < pmtTable[service_number]->streamCount; i++)
+        {
+            type = pmtTable[service_number]->pmtServiceInfoArray[i].stream_type;
+            printf("type: %d,", type);
+            if (type == 0x01 || type == 0x02)
+            {
+                vpid = pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
+                vtype = type;
+            }
+            if (type == 0x03 || type == 0x04)
+            {
+                apid = pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
+                atype = type;
+            }
+        }
+        printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
+        Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->streamHandle);
+        printf("Stream removed\n");
+        Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->streamHandle));
+        printf("Steam created\n");
+    }
+    else
+    {
+        printf("No!\n");
     }
 
     return NO_ERROR;
