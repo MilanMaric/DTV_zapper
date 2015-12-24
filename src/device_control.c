@@ -51,6 +51,7 @@ PmtTable** pmtTable;
 DeviceHandle *globHandle;
 
 int32_t indicator = 0;
+int32_t currentStream=0;
 
 int32_t tunerStatusCallback(t_LockStatus status)
 {
