@@ -62,7 +62,7 @@ typedef enum
 
 typedef int32_t(*Remote_Control_Callback)(uint32_t code);
 
-void registerRemoteCallback(Remote_Control_Callback remoteControllCallback);
+void registerServiceNumberRemoteCallBack(Remote_Control_Callback remote_ControllCallback);
 void registerVolumeRemoteCallback(Remote_Control_Callback remoteControllCallback);
 
 void* remoteControlThread(void*);

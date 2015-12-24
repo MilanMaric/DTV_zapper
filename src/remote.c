@@ -40,9 +40,9 @@ static Remote_Control_Callback volumeCallback;
 
 int32_t getKeys(int32_t count, uint8_t* buf, int32_t* eventRead);
 
-void registerServiceNumberRemoteCallBack(Remote_Control_Callback remoteControllCallback)
+void registerServiceNumberRemoteCallBack(Remote_Control_Callback remote_ControllCallback)
 {
-    sectionNumberCallback = remoteControllCallback;
+    sectionNumberCallback = remote_ControllCallback;
 }
 
 void registerVolumeRemoteCallback(Remote_Control_Callback remoteControllCallback)

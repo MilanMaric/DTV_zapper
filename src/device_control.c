@@ -48,6 +48,7 @@ static uint8_t parsedTag = 0;
 
 PatTable* patTable;
 PmtTable** pmtTable;
+DeviceHandle globHandle;
 
 int32_t indicator = 0;
 
@@ -99,25 +100,25 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
     static struct timespec lockStatusWaitTime;
     static struct timeval now;
     printf("%s: started\n", __FUNCTION__);
-    if (pmtTable[indicator] != NULL)
-    {
-        if (pmtTable[indicator]->pmtHeader != NULL)
-            free(pmtTable[indicator]->pmtHeader);
-        free(pmtTable);
+    if(pmtTable==NULL){
+      pmtTable=(PmtTable**) malloc(patTable->serviceInfoCount*sizeof(PmtTable*));
+	printf("%s : pmt allocated\n",__FUNCTION__);
     }
-    pmtTable[indicator] = (PmtTable*) malloc(sizeof (PmtTable));
-    pmtTable[indicator]->pmtHeader = (PmtHeader*) malloc(sizeof (PmtHeader));
-
+    if(pmtTable==NULL)
+      return ERROR;
     printf("PID: %d\n", patTable->patServiceInfoArray[1].pid);
-
+    if(pmtTable[indicator]==NULL){
+printf("%s : ERROR pmtTable[%d] is null",__FUNCTION__,indicator);
+return ERROR;
+    }
     gettimeofday(&now, NULL);
     lockStatusWaitTime.tv_sec = now.tv_sec + 10;
-
     if (Demux_Set_Filter(handle->playerHandle, pid, 0x02, &(handle->filterHandle)))
     {
         printf("\n%s:ERROR Set filter failure!\n", __FUNCTION__);
         return ERROR;
     }
+    printf("%s : pmt set filter\n",__FUNCTION__);
 
     if (Demux_Register_Section_Filter_Callback(pmt_Demux_Section_Filter_Callback))
     {
@@ -125,6 +126,7 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
         Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
         return ERROR;
     }
+    printf("%s : pmt register section filter\n",__FUNCTION__);
 
     pthread_mutex_lock(&pmtMutex);
     if (ETIMEDOUT == pthread_cond_timedwait(&pmtCondition, &pmtMutex, &lockStatusWaitTime))
@@ -134,9 +136,12 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
         return ERROR;
     }
     pthread_mutex_unlock(&pmtMutex);
+    printf("%s : pmt parsed\n",__FUNCTION__);
     dumpPmtTable(pmtTable[indicator]);
     Demux_Unregister_Section_Filter_Callback(pmt_Demux_Section_Filter_Callback);
-    Demux_Free_Filter(handle->playerHandle, handle->sourceHandle);
+    printf("%s : pmt section filter unregistered\n",__FUNCTION__);
+    Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
+    printf("%s : filter free\n",__FUNCTION__);
     printf("%s ended", __FUNCTION__);
     return NO_ERROR;
 }
@@ -187,7 +192,7 @@ int32_t initPatParsing(DeviceHandle *handle)
     printf("%s: pat parsed\n", __FUNCTION__);
     Demux_Unregister_Section_Filter_Callback(pat_Demux_Section_Filter_Callback);
     printf("%s: unregistered callback\n", __FUNCTION__);
-    Demux_Free_Filter(handle->playerHandle, handle->sourceHandle);
+    Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
     printf("%s: Demux_Free_Filter\n", __FUNCTION__);
     dumpPatTable(patTable);
     return NO_ERROR;
@@ -215,16 +220,15 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     {
         printf("\n%s : ERROR Tuner_Register_Status_Callback() fail\n", __FUNCTION__);
     }
-    printf("%s: After Tuner_Register_Status_Callback(tunerStatusCallback)\n", __FUNCTION__);
+    printf("%s: After Tuner_Register_Status_Callback(tunerStatusCallback) %u\n", __FUNCTION__,freqHz);
     /*Lock to frequency*/
-
     if (!Tuner_Lock_To_Frequency(freqHz, parms->bandwidth, parms->module))
     {
-        printf("\n%s: INFO Tuner_Lock_To_Frequency(): %u Hz - success!\n", __FUNCTION__, parms->frequency);
+        printf("\n%s: INFO Tuner_Lock_To_Frequency(): %u Hz - success!\n", __FUNCTION__, freqHz);
     }
     else
     {
-        printf("\n%s: ERROR Tuner_Lock_To_Frequency(): %u Hz - fail!\n", __FUNCTION__, parms->frequency);
+        printf("\n%s: ERROR Tuner_Lock_To_Frequency(): %u Hz - fail!\n", __FUNCTION__, freqHz);
         Tuner_Deinit();
         return -1;
     }
@@ -264,18 +268,27 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         return ERROR;
     }
     printf("%s: Player_Stream_Create\n", __FUNCTION__);
-    if (initPatParsing(handle) == NO_ERROR)
+    if (initPatParsing(handle) != NO_ERROR)
     {
         return ERROR;
     }
-    for (i = 0; i < patTable->serviceInfoCount; i++)
+    pmtTable=(PmtTable**) malloc(patTable->serviceInfoCount*sizeof(PmtTable*));
+    for (i = 1; i < patTable->serviceInfoCount; i++)
     {
         indicator = i;
-        if (initPmtParsing(handle, patTable->patServiceInfoArray[i].pid) == NO_ERROR)
+	pmtTable[i]=(PmtTable*) malloc(sizeof(PmtTable));
+	pmtTable[i]->pmtHeader=(PmtHeader*) malloc(sizeof(PmtHeader));
+	  printf("pmt table %d\n",i);
+        if (initPmtParsing(handle, patTable->patServiceInfoArray[i].pid) != NO_ERROR){
+	  deviceDeInit(handle);
             return ERROR;
+	}
     }
+    globHandle.filterHandle=handle->filterHandle;
+    globHandle.sourceHandle=handle->sourceHandle;
+    globHandle.playerHandle=handle->playerHandle;
+    globHandle.streamHandle=handle->streamHandle;
     parsedTag = 1;
-
     return NO_ERROR;
 }
 
@@ -288,34 +301,19 @@ void deviceDeInit(DeviceHandle *handle)
     Player_Source_Close(handle->playerHandle, handle->sourceHandle);
     Player_Deinit(handle->playerHandle);
     Tuner_Deinit();
-    if (pmtTable != NULL)
-    {
-        for (i = 0; i < patTable->serviceInfoCount; i++)
-        {
-            if (pmtTable[i]->pmtHeader != NULL)
-                free(pmtTable[i]->pmtHeader);
-            free(pmtTable[i]);
-        }
-        free(pmtTable);
-    }
-    if (patTable != NULL)
-    {
-
-        if (patTable->patHeader != NULL)
-            free(patTable->patHeader);
-        free(patTable);
-    }
 }
 
-uint32_t remoteServiceCallback(uint16_t service_number)
+int32_t remoteServiceCallback(uint32_t service_number)
 {
     if (parsedTag == 0)
     {
         printf("%s:Pmt sections are not ready yet!!!", __FUNCTION__);
         return ERROR;
     }
-    if (service_number > 0 && service_number < patTable->serviceInfoCount)
+    if (service_number > 0 && service_number < patTable->serviceInfoCount){
         dumpPmtTable(pmtTable[service_number]);
+	//Player_Stream_Create(globHandle.playerHandle, globHandle.sourceHandle, , , &(handle.streamHandle))
+    }
 
     return NO_ERROR;
 }

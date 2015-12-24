@@ -49,4 +49,4 @@ mm:
     
 clean:
 	rm -f mm /home/student/pputvios1/ploca/mm
-	git fetch
+#	git fetch
