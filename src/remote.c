@@ -74,7 +74,7 @@ void* remoteControlThread(void* nn)
         printf("Error allocating memory !");
         return;
     }
-
+    tmp_number = service_number;
     while (NON_STOP)
     {
 
@@ -83,7 +83,7 @@ void* remoteControlThread(void* nn)
             printf("Error while reading input events !");
             return;
         }
-        tmp_number = service_number;
+
         for (i = 0; i < eventCnt; i++)
         {
             if (eventBuf[i].value == 1 && eventBuf[i].type == 1)
