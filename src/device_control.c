@@ -218,7 +218,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
 
     printf("%s: Lock to frequency %u, %d", __FUNCTION__, freqHz, sizeof (unsigned long long));
 
-    if (!Tuner_Lock_To_Frequency(freqHz, parms->bandwidth, parms->module))
+    if (!Tuner_Lock_To_Frequency(818000000U, parms->bandwidth, parms->module))
     {
         printf("\n%s: INFO Tuner_Lock_To_Frequency(): %d Hz - success!\n", __FUNCTION__, parms->frequency);
     }
