@@ -155,7 +155,7 @@ int32_t initPatParsing(DeviceHandle *handle)
         free(patTable);
     }
     // allocate memory for PAT
-    patTable = (PatTable*) malloc(sizeof (patTable));
+    patTable = (PatTable*) malloc(sizeof (PatTable));
     patTable->patHeader = (PatHeader*) malloc(sizeof (PatHeader));
     printf("%s: PAT allocated\n", __FUNCTION__);
     // set Demux filter for pat table
