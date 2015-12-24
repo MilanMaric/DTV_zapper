@@ -134,6 +134,7 @@ void initDefaultValues(config_parameters* parms)
 
 tStreamType str2AudioType(char* aType)
 {
+    printf("%s : %s", __FUNCTION__, aType);
     if (strcmp(aType, "ac3") == 0)
         return AUDIO_TYPE_DOLBY_AC3;
     if (strcmp(aType, "plus") == 0)
@@ -213,6 +214,7 @@ tStreamType str2AudioType(char* aType)
 
 tStreamType str2VideoType(char* vType)
 {
+    printf("%s : %s", __FUNCTION__, vType);
     if (strcmp(vType, "mpeg2") == 0)
         return VIDEO_TYPE_MPEG2;
     if (strcmp(vType, "h264") == 0)
