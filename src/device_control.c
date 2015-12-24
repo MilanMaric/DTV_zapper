@@ -209,6 +209,8 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
 
     printf("%s: after Tuner_Init\n", __FUNCTION__);
     /* Register tuner status callback */
+    gettimeofday(&now, NULL);
+    lockStatusWaitTime.tv_sec = now.tv_sec + 10;
     if (Tuner_Register_Status_Callback(tunerStatusCallback))
     {
         printf("\n%s : ERROR Tuner_Register_Status_Callback() fail\n", __FUNCTION__);
