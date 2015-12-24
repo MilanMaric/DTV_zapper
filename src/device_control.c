@@ -198,6 +198,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     static struct timespec lockStatusWaitTime;
     static struct timeval now;
     int i;
+    uint32_t freqHz = parms->frequency*MHZ;
     printf("%s: started\n", __FUNCTION__);
     /*Initialize tuner device*/
     if (Tuner_Init())
@@ -214,15 +215,17 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     }
     printf("%s: After Tuner_Register_Status_Callback(tunerStatusCallback)\n", __FUNCTION__);
     /*Lock to frequency*/
-    printf("%s: Lock to frequency %u, %d", __FUNCTION__, (parms->frequency) * MHZ, sizeof (unsigned long long));
-    if (!Tuner_Lock_To_Frequency(((uint32_t)parms->frequency) * MHZ, parms->bandwidth, parms->module))
-    {
-        printf("\n%s: INFO Tuner_Lock_To_Frequency(): %d Hz - success!\n", __FUNCTION__, parms->frequency);
-    }
+
+    printf("%s: Lock to frequency %u, %d", __FUNCTION__, freqHz sizeof (unsigned long long));
+
+    if (!Tuner_Lock_To_Frequency((freqHz, parms->bandwidth, parms->module)))
+        {
+            printf("\n%s: INFO Tuner_Lock_To_Frequency(): %d Hz - success!\n", __FUNCTION__, parms->frequency);
+        }
     else
     {
         printf("\n%s: ERROR Tuner_Lock_To_Frequency(): %d Hz - fail!\n", __FUNCTION__, parms->frequency);
-        Tuner_Deinit();
+                Tuner_Deinit();
         return -1;
     }
     /* Wait for tuner to lock*/
@@ -230,11 +233,11 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     if (ETIMEDOUT == pthread_cond_timedwait(&statusCondition, &statusMutex, &lockStatusWaitTime))
     {
         printf("\n%s:ERROR Lock timeout exceeded!\n", __FUNCTION__);
-        Tuner_Deinit();
+                Tuner_Deinit();
         return -1;
     }
     pthread_mutex_unlock(&statusMutex);
-    printf("%s: Tuner locked\n", __FUNCTION__);
+            printf("%s: Tuner locked\n", __FUNCTION__);
 
 
     if (Player_Init(&(handle->playerHandle)))
@@ -247,7 +250,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     if (Player_Source_Open(handle->playerHandle, &(handle->sourceHandle)))
     {
         Player_Deinit(handle->playerHandle);
-        Tuner_Deinit();
+                Tuner_Deinit();
         return -1;
     }
     printf("%s: Player_Source_Open\n", __FUNCTION__);
@@ -255,9 +258,9 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     if (Player_Stream_Create(handle->playerHandle, handle->sourceHandle, parms->vPid, parms->vType, &handle->streamHandle))
     {
         printf("%s Player_Source_Open failed", __FUNCTION__);
-        Player_Source_Close(handle->playerHandle, handle->sourceHandle);
-        Player_Deinit(handle->playerHandle);
-        Tuner_Deinit();
+                Player_Source_Close(handle->playerHandle, handle->sourceHandle);
+                Player_Deinit(handle->playerHandle);
+                Tuner_Deinit();
         return ERROR;
     }
     printf("%s: Player_Stream_Create\n", __FUNCTION__);
@@ -270,36 +273,38 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         indicator = i;
         if (initPmtParsing(handle, patTable->patServiceInfoArray[i].pid) == NO_ERROR)
             return ERROR;
-    }
+        }
     parsedTag = 1;
+
     return NO_ERROR;
 }
 
 void deviceDeInit(DeviceHandle *handle)
 {
     int i = 0;
-    parsedTag = 0;
-    Player_Stream_Remove(handle->playerHandle, handle->sourceHandle, handle->streamHandle);
-    Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
-    Player_Source_Close(handle->playerHandle, handle->sourceHandle);
-    Player_Deinit(handle->playerHandle);
-    Tuner_Deinit();
+            parsedTag = 0;
+            Player_Stream_Remove(handle->playerHandle, handle->sourceHandle, handle->streamHandle);
+            Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
+            Player_Source_Close(handle->playerHandle, handle->sourceHandle);
+            Player_Deinit(handle->playerHandle);
+            Tuner_Deinit();
     if (pmtTable != NULL)
     {
         for (i = 0; i < patTable->serviceInfoCount; i++)
         {
             if (pmtTable[i]->pmtHeader != NULL)
-                free(pmtTable[i]->pmtHeader);
-            free(pmtTable[i]);
-        }
+                    free(pmtTable[i]->pmtHeader);
+                    free(pmtTable[i]);
+            }
         free(pmtTable);
     }
     if (patTable != NULL)
     {
+
         if (patTable->patHeader != NULL)
-            free(patTable->patHeader);
-        free(patTable);
-    }
+                free(patTable->patHeader);
+                free(patTable);
+        }
 }
 
 uint32_t remoteServiceCallback(uint16_t service_number)
@@ -310,17 +315,19 @@ uint32_t remoteServiceCallback(uint16_t service_number)
         return ERROR;
     }
     if (service_number > 0 && service_number < patTable->serviceInfoCount)
-        dumpPmtTable(pmtTable[service_number]);
-    return NO_ERROR;
-}
+            dumpPmtTable(pmtTable[service_number]);
+
+        return NO_ERROR;
+    }
 
 uint32_t remoteVolumeCallback(uint16_t service)
 {
     if (service == VOLUME_PLUS)
-        printf("Volume plus");
-    if (service == VOLUME_MINUS)
-        printf("Volume minus");
-}
+            printf("Volume plus");
+
+        if (service == VOLUME_MINUS)
+                printf("Volume minus");
+        }
 
 uint8_t getParsedTag()
 {
