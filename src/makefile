@@ -44,7 +44,7 @@ SRCS += ./config_parser.c
 
 mm:
 	$(CC) -o mm $(INCS) $(SRCS) $(CFLAGS) $(LIBS)
-#	cp mm /home/student/pputvios1/ploca/mm
+	cp mm /home/student/pputvios1/ploca/mm
     
 clean:
-	rm -f mm #/home/student/pputvios1/ploca/mm
+	rm -f mm /home/student/pputvios1/ploca/mm
