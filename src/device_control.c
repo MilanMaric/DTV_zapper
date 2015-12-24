@@ -327,7 +327,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
             if (type == 0x01 || type == 0x02)
             {
                 vpid = pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
-                vtype = type;
+                vtype = (type==0x02)?42:43;
             }
             if (type == 0x03 || type == 0x04)
             {
