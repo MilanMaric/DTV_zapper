@@ -44,6 +44,7 @@ int32_t main(int32_t argc, char** argv)
         printf("%s : ERROR while parsing configuration\n", __FUNCTION__);
         return ERROR;
     }
+    dumpConfig(&parms);
     pthread_t remote_thread;
     pthread_create(&remote_thread, NULL, &remoteControlThread, NULL);
     if (deviceInit(&parms, &handle) == ERROR)
