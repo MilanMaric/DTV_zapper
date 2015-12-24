@@ -115,12 +115,12 @@ void* remoteControlThread(void* nn)
                         service_number = tmp_number;
                     }
                 }
-                printf("Service number: %d tmp_number %d\n", service_number,tmp_number);
+                printf("Service number: %d tmp_number %d\n", service_number, tmp_number);
                 if (sectionNumberCallback != NULL && tmp_number != service_number)
                     sectionNumberCallback(service_number);
-                tmp_number = service_number;
-            }
 
+            }
+            tmp_number = service_number;
         }
     }
     free(eventBuf);
