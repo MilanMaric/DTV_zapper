@@ -31,7 +31,7 @@ SOFTWARE.
 #define CONFIG_FILE_PATH "config.ini"
 #include "tdp_api.h"
 
-#define MHZ 1000000ULL
+#define MHZ 1000000U
 
 typedef struct config_parameters_s
 {
