@@ -48,7 +48,7 @@ static uint8_t parsedTag = 0;
 
 PatTable* patTable;
 PmtTable** pmtTable;
-DeviceHandle globHandle;
+DeviceHandle *globHandle;
 
 int32_t indicator = 0;
 
@@ -284,10 +284,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
             return ERROR;
 	}
     }
-    globHandle.filterHandle=handle->filterHandle;
-    globHandle.sourceHandle=handle->sourceHandle;
-    globHandle.playerHandle=handle->playerHandle;
-    globHandle.streamHandle=handle->streamHandle;
+    globHandle=handle;
     parsedTag = 1;
     return NO_ERROR;
 }
@@ -305,6 +302,12 @@ void deviceDeInit(DeviceHandle *handle)
 
 int32_t remoteServiceCallback(uint32_t service_number)
 {
+  uint16_t vpid=0;
+  uint8_t vtype=0;
+  uint8_t atype=0;
+  uint16_t apid=0;
+  uint8_t type=0;
+  int16_t i=0;
     if (parsedTag == 0)
     {
         printf("%s:Pmt sections are not ready yet!!!", __FUNCTION__);
@@ -312,7 +315,25 @@ int32_t remoteServiceCallback(uint32_t service_number)
     }
     if (service_number > 0 && service_number < patTable->serviceInfoCount){
         dumpPmtTable(pmtTable[service_number]);
-	//Player_Stream_Create(globHandle.playerHandle, globHandle.sourceHandle, , , &(handle.streamHandle))
+	for(i=0;i<pmtTable[service_number]->streamCount;i++){
+	  type=pmtTable[service_number]->pmtServiceInfoArray[i].stream_type;
+	  printf("type: %d,",type);
+	  if(type==0x01||type==0x02){
+	    vpid=pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
+	    vtype=type;
+	  }
+	  if(type==0x03||type==0x04){
+	    apid=pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
+	    atype=type;
+	  }
+	}
+	 printf("\n\n Vtype:%d Vpid:%d\n",vtype,vpid);
+	  Player_Stream_Remove(globHandle->playerHandle,globHandle->sourceHandle,globHandle->streamHandle);
+	  printf("Stream removed\n");
+	  Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->streamHandle));
+	  printf("Steam created");
+    }else{
+      printf("No!\n");
     }
 
     return NO_ERROR;
