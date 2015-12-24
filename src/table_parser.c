@@ -79,8 +79,11 @@ void dumpPatHeader(PatHeader* patHeader)
 
 void parsePatTable(uint8_t *buffer, PatTable* table)
 {
+    printf("%s started\n",__FUNCTION__);
     parsePatHeader(buffer, table->patHeader);
+    printf("%s header parsed\n",__FUNCTION__);
     parsePatServiceInfoArray(buffer, table->patServiceInfoArray, table->patHeader->section_length);
+    printf("%s service info parsed\n",__FUNCTION__);
     (*table).serviceInfoCount = (uint8_t) ((*(*table).patHeader).section_length - 10) / 4;
 }
 

@@ -72,6 +72,7 @@ int32_t pat_Demux_Section_Filter_Callback(uint8_t *buffer)
 
     printf("%s running\n", __FUNCTION__);
     parsePatTable(buffer, patTable);
+    printf("%s patTable parsed\n",__FUNCTION__);
     if (patTable->patHeader->table_id == 0x00)
     {
         pthread_mutex_lock(&patMutex);
