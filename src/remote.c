@@ -59,6 +59,7 @@ void* remoteControlThread(void* nn)
     uint32_t i;
     uint32_t service_number = 0;
     uint32_t tmp_number;
+    uint32_t tmp_number2;
     inputFileDesc = open(dev, O_RDWR);
     if (inputFileDesc == -1)
     {
@@ -75,6 +76,7 @@ void* remoteControlThread(void* nn)
         return;
     }
     tmp_number = service_number;
+
     while (NON_STOP)
     {
 
@@ -88,6 +90,7 @@ void* remoteControlThread(void* nn)
         {
             if (eventBuf[i].value == 1 && eventBuf[i].type == 1)
             {
+                tmp_number2 = service_number;
                 switch (eventBuf[i].code)
                 {
                 case REMOTE_BTN_PROGRAM_PLUS:
@@ -116,9 +119,8 @@ void* remoteControlThread(void* nn)
                     }
                 }
                 printf("Service number: %d tmp_number\n", service_number);
-                if (sectionNumberCallback != NULL)
+                if (sectionNumberCallback != NULL && tmp_number2 == service_number)
                     sectionNumberCallback(service_number);
-                tmp_number = service_number;
             }
 
         }
