@@ -51,7 +51,7 @@ PmtTable** pmtTable;
 DeviceHandle *globHandle;
 
 int32_t indicator = 0;
-int32_t currentStream=0;
+int32_t currentStream = 0;
 
 int32_t tunerStatusCallback(t_LockStatus status)
 {
@@ -336,13 +336,19 @@ int32_t remoteServiceCallback(uint32_t service_number)
             }
         }
         printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
-        //Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle);
-        printf("Stream removed\n");
+        if(Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle)){
+        printf("Stream not removed\n");
+        }else{
+            printf("Stream removed\n");
+        }
         if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->vStreamHandle)))
         {
             printf("Player stream not created\n");
         }
-        printf("Steam created\n");
+        else
+        {
+            printf("Steam created\n");
+        }
     }
     else
     {
