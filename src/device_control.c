@@ -72,7 +72,7 @@ int32_t pat_Demux_Section_Filter_Callback(uint8_t *buffer)
 
     printf("%s running\n", __FUNCTION__);
     parsePatTable(buffer, patTable);
-    printf("%s patTable parsed\n",__FUNCTION__);
+    printf("%s patTable parsed\n", __FUNCTION__);
     if (patTable->patHeader->table_id == 0x00)
     {
         pthread_mutex_lock(&patMutex);
@@ -214,7 +214,8 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     }
     printf("%s: After Tuner_Register_Status_Callback(tunerStatusCallback)\n", __FUNCTION__);
     /*Lock to frequency*/
-    if (!Tuner_Lock_To_Frequency(parms->frequency*MHZ, parms->bandwidth, parms->module))
+    printf("%s: Lock to frequency %l", parms->frequency * MHZ);
+    if (!Tuner_Lock_To_Frequency(parms->frequency * MHZ, parms->bandwidth, parms->module))
     {
         printf("\n%s: INFO Tuner_Lock_To_Frequency(): %d Hz - success!\n", __FUNCTION__, parms->frequency);
     }
