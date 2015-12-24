@@ -214,7 +214,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     }
     printf("%s: After Tuner_Register_Status_Callback(tunerStatusCallback)\n", __FUNCTION__);
     /*Lock to frequency*/
-    printf("%s: Lock to frequency %l", parms->frequency * MHZ);
+    printf("%s: Lock to frequency %llu, %d", (parms->frequency) * MHZ, sizeof (unsigned long long));
     if (!Tuner_Lock_To_Frequency(parms->frequency * MHZ, parms->bandwidth, parms->module))
     {
         printf("\n%s: INFO Tuner_Lock_To_Frequency(): %d Hz - success!\n", __FUNCTION__, parms->frequency);
