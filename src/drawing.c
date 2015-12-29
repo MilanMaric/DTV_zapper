@@ -39,16 +39,15 @@ static int screenHeight = 0;
 static DFBSurfaceDescription surfaceDesc;
 static int initialized = 0;
 
+
 void fillBlack()
 {
-    static uint8_t i = 0xFF;
-    i -= 0x10;
     printf("fill black\n");
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
                                /*red*/ 0x00,
                                /*green*/ 0x00,
                                /*blue*/ 0x00,
-                               /*alpha*/ 0xFF));
+                               /*alpha*/ 0x00));
     primary->FillRectangle(/*surface to draw on*/ primary,
                            /*upper left x coordinate*/ 0,
                            /*upper left y coordinate*/ 0,
@@ -68,6 +67,7 @@ void initDirectFB()
     DFBCHECK(dfbInterface->CreateSurface(dfbInterface, &surfaceDesc, &primary));
     /* fetch the screen size */
     DFBCHECK(primary->GetSize(primary, &screenWidth, &screenHeight));
+     
     fillBlack();
 }
 
@@ -81,16 +81,7 @@ void timerFunction()
 {
     fillBlack();
     printf("Timer function\n");
-    DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
-                               /*red*/ 0x00,
-                               /*green*/ 0x00,
-                               /*blue*/ 0x00,
-                               /*alpha*/ 0xff));
-    DFBCHECK(primary->FillRectangle(/*surface to draw on*/ primary,
-                                    /*upper left x coordinate*/ 0,
-                                    /*upper left y coordinate*/ 0,
-                                    /*rectangle width*/ screenWidth,
-                                    /*rectangle height*/ screenHeight));
+    fillBlack();
     primary->Flip(primary,
                   /*region to be updated, NULL for the whole surface*/NULL,
                   /*flip flags*/0);
@@ -103,7 +94,7 @@ void setTimer(int32_t interval)
     struct itimerspec timerSpec;
     struct itimerspec timerSpecOld;
     int32_t timerFlags = 0;
-
+    printf("%s started\n",__FUNCTION__);
     //brisanje strukture pre setovanja vrednosti
     memset(&timerSpec, 0, sizeof (timerSpec));
 
@@ -135,28 +126,43 @@ void drawTextInfo(int32_t service_number)
 
     fillBlack();
 
-    IDirectFBFont *fontInterface = NULL;
-    DFBFontDescription fontDesc;
-
-    /* specify the height of the font by raising the appropriate flag and setting the height value */
-    fontDesc.flags = DFDESC_HEIGHT;
-    fontDesc.height = 48;
-
+    
+   
+ DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
+                               /*red*/ 0xFF,
+                               /*green*/ 0x00,
+                               /*blue*/ 0x00,
+                               /*alpha*/ 0x88));
+    primary->FillRectangle(/*surface to draw on*/ primary,
+                           /*upper left x coordinate*/ 1*screenWidth/4,
+                           /*upper left y coordinate*/ 3*screenHeight/8,
+                           /*rectangle width*/ 2*screenWidth/4,
+                           /*rectangle height*/ 2*screenHeight/8);
     /* create the font and set the created font for primary surface text drawing */
-    DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc, &fontInterface));
+     IDirectFBFont *fontInterface = NULL;
+     DFBFontDescription fontDesc;
+   DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc, &fontInterface));
     DFBCHECK(primary->SetFont(primary, fontInterface));
-
+ fontDesc.flags = DFDESC_HEIGHT;
+    fontDesc.height = 48;
     /* draw the text */
+     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
+                               /*red*/ 0xFF,
+                               /*green*/ 0xFF,
+                               /*blue*/ 0xFF,
+                               /*alpha*/ 0xFF));
     DFBCHECK(primary->DrawString(primary,
-                                 /*text to be drawn*/ "Text Example",
+                                 /*text to be drawn*/ buffer,
                                  /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
-                                 /*x coordinate of the lower left corner of the resulting text*/ 100,
-                                 /*y coordinate of the lower left corner of the resulting text*/ 100,
+                                 /*x coordinate of the lower left corner of the resulting text*/ 3*screenHeight/8,
+                                 /*y coordinate of the lower left corner of the resulting text*/ 1*screenHeight,
                                  /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
     primary->Flip(primary,
                   /*region to be updated, NULL for the whole surface*/NULL,
                   /*flip flags*/0);
-    setTimer(3);
+    //setTimer(3);
+    sleep(3);
+    timerFunction();
 }
 
 
