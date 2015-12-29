@@ -99,6 +99,16 @@ void setTimer(int32_t interval)
 {
     struct sigevent signalEvent;
     timer_t timerId;
+     struct itimerspec timerSpec;
+    struct itimerspec timerSpecOld;
+    int32_t timerFlags = 0;
+
+    //brisanje strukture pre setovanja vrednosti
+    memset(&timerSpec, 0, sizeof (timerSpec));
+
+    //specificiranje vremenskih podešavanja timer-a
+    timerSpec.it_value.tv_sec = interval; //3 seconds timeout
+    timerSpec.it_value.tv_nsec = 0;
     //reći OS-u da notifikaciju šalje prozivanjem specificirane funkcije iz posebne niti
     signalEvent.sigev_notify = SIGEV_THREAD;
     //funkcija koju će OS prozvati kada interval istekne
@@ -111,16 +121,7 @@ void setTimer(int32_t interval)
                  /*podešavanja timer-a*/ &signalEvent,
                  /*mesto gde će se smestiti ID novog timer-a*/ &timerId);
 
-    struct itimerspec timerSpec;
-    struct itimerspec timerSpecOld;
-    int32_t timerFlags = 0;
-
-    //brisanje strukture pre setovanja vrednosti
-    memset(&timerSpec, 0, sizeof (timerSpec));
-
-    //specificiranje vremenskih podešavanja timer-a
-    timerSpec.it_value.tv_sec = interval; //3 seconds timeout
-    timerSpec.it_value.tv_nsec = 0;
+   
 }
 
 void drawTextInfo(int32_t service_number)
