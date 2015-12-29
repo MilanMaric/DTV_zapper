@@ -141,7 +141,7 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
     }
     pthread_mutex_unlock(&pmtMutex);
     printf("%s : pmt parsed\n", __FUNCTION__);
-  //  dumpPmtTable(pmtTable[indicator]);
+    //  dumpPmtTable(pmtTable[indicator]);
     Demux_Unregister_Section_Filter_Callback(pmt_Demux_Section_Filter_Callback);
     printf("%s : pmt section filter unregistered\n", __FUNCTION__);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
@@ -198,7 +198,7 @@ int32_t initPatParsing(DeviceHandle *handle)
     printf("%s: unregistered callback\n", __FUNCTION__);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
     printf("%s: Demux_Free_Filter\n", __FUNCTION__);
-  //  dumpPatTable(patTable);
+    //  dumpPatTable(patTable);
     return NO_ERROR;
 }
 
@@ -271,8 +271,8 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         Tuner_Deinit();
         return ERROR;
     }
-    printf("Audio %d %d \n", parms->aPid,parms->aType);
-    printf("Video %d %d \n", parms->vPid,parms->vType);
+    printf("Audio %d %d \n", parms->aPid, parms->aType);
+    printf("Video %d %d \n", parms->vPid, parms->vType);
     if (Player_Stream_Create(handle->playerHandle, handle->sourceHandle, parms->aPid, parms->aType, &(handle->aStreamHandle)))
     {
         printf("%s Player_Source_Open failed", __FUNCTION__);
@@ -331,8 +331,8 @@ int32_t remoteServiceCallback(uint32_t service_number)
     }
     if (service_number > 0 && service_number < patTable->serviceInfoCount)
     {
-       // dumpPmtTable(pmtTable[service_number]);
-	number=pmtTable[service_number]->streamCount;
+        // dumpPmtTable(pmtTable[service_number]);
+        number = pmtTable[service_number]->streamCount;
         for (i = 0; i < number; i++)
         {
             type = pmtTable[service_number]->pmtServiceInfoArray[i].stream_type;
@@ -340,49 +340,55 @@ int32_t remoteServiceCallback(uint32_t service_number)
             if (type == 0x01 || type == 0x02)
             {
                 vpid = pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
-                vtype = (type==0x02)?VIDEO_TYPE_MPEG2:VIDEO_TYPE_MPEG1;
+                vtype = (type == 0x02) ? VIDEO_TYPE_MPEG2 : VIDEO_TYPE_MPEG1;
             }
             if (type == 0x03 || type == 0x04)
             {
                 apid = pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
-                atype = (type==0x03)?AUDIO_TYPE_DOLBY_AC3:AUDIO_TYPE_MP3;
+                atype = (type == 0x03) ? AUDIO_TYPE_DOLBY_AC3 : AUDIO_TYPE_MP3;
             }
         }
         printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
-	printf("Atype:%d apid:%d\n", atype, apid);
-     
-        if(Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle)){
-        printf("Stream not removed\n");
-        }else{
+        printf("Atype:%d apid:%d\n", atype, apid);
+
+        if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle))
+        {
+            printf("Stream not removed\n");
+        }
+        else
+        {
             printf("Video stream removed\n");
         }
-         if(vtype!=0 && vpid!=0){
-        if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->vStreamHandle)))
+        if (vtype != 0 && vpid != 0)
         {
-            printf("Player stream not created\n");
+            if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->vStreamHandle)))
+            {
+                printf("Player stream not created\n");
+            }
+            else
+            {
+                printf("Video stream created\n");
+            }
         }
         else
         {
-            printf("Video stream created\n");
+            printf("This service doesent contain video\n");
         }
-       }else{
-	 printf("This service doesent contain video\n");
-       }
-   /*       if(Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->aStreamHandle)){
-        printf("Video stream not removed\n");
-        }else{
-            printf("Stream removed\n");
-        }
+        /*       if(Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->aStreamHandle)){
+             printf("Video stream not removed\n");
+             }else{
+                 printf("Stream removed\n");
+             }
       
-        if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->aStreamHandle)))
-        {
-            printf("Player stream not created\n");
-        }
-        else
-        {
-            printf("Audio stream created\n");
-        }*/
-   drawTextInfo(service_number);
+             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->aStreamHandle)))
+             {
+                 printf("Player stream not created\n");
+             }
+             else
+             {
+                 printf("Audio stream created\n");
+             }*/
+        drawTextInfo(service_number);
     }
     else
     {

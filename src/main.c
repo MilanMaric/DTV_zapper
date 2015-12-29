@@ -37,8 +37,8 @@ int32_t main(int32_t argc, char** argv)
     DeviceHandle handle;
     config_parameters parms;
     /* initialize DirectFB */
-      DFBCHECK(DirectFBInit(&argc, &argv));
-     initDirectFB();
+    DFBCHECK(DirectFBInit(&argc, &argv));
+    initDirectFB();
     if (parseConfig(&parms, argv[1]) == ERROR)
     {
         printf("%s : ERROR while parsing configuration\n", __FUNCTION__);

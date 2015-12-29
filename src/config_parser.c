@@ -85,13 +85,13 @@ int32_t parseConfig(config_parameters * parms, char* config_file_path)
         {
             parms->module = str2TModule(value);
         }
-        else if (strcmp(name, "aType")==0)
+        else if (strcmp(name, "aType") == 0)
         {
             parms->aType = str2AudioType(value);
             if (parms->aType < 0 || parms->aType == AUDIO_TYPE_UNSUPPORTED)
                 return ERROR;
         }
-        else if (strcmp(name, "vType")==0)
+        else if (strcmp(name, "vType") == 0)
         {
             parms->vType = str2VideoType(value);
             if (parms->vType < 0 || parms->vType == VIDEO_TYPE_WMV3 + 1)
