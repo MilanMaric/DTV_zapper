@@ -41,11 +41,14 @@ static int initialized = 0;
 
 void fillBlack()
 {
+  static uint8_t i=0xFF;
+  i-=0x10;
+  printf("fill black\n");
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
-                               /*red*/ 0x00,
+                               /*red*/ 0xFF,
                                /*green*/ 0x00,
                                /*blue*/ 0x00,
-                               /*alpha*/ 0xff));
+                               /*alpha*/ 0x88));
     primary->FillRectangle(/*surface to draw on*/ primary,
                            /*upper left x coordinate*/ 0,
                            /*upper left y coordinate*/ 0,
@@ -123,26 +126,32 @@ void setTimer(int32_t interval)
 void drawTextInfo(int32_t service_number)
 {
     char buffer[5];
+    DFBFontDescription fontDesc;
+    IDirectFBFont *fontInterface=NULL;
     sprintf(buffer, "%d", service_number);
 
 
     /* rectangle drawing */
 
     fillBlack();
-
-    /* draw the text */
-
-    DFBCHECK(primary->SetColor(primary, 0xff, 0x80, 0x80, 0xff));
-    DFBCHECK(primary->DrawString(primary,
-                                 /*text to be drawn*/ buffer,
-                                 /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
-                                 /*x coordinate of the lower left corner of the resulting text*/ 500,
-                                 /*y coordinate of the lower left corner of the resulting text*/ 500,
-                                 /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
+    
+   /* 
+    
+    DFBCHECK(dfbInterface->CreateFont(dfbInterface,"/home/galois/fonts/DejaVuSans.ttf",&fontDesc,&fontInterface));
+    DFBCHECK(primary->SetFont(primary,fontInterface));
+    fontDesc.flags=DFDESC_HEIGHT;
+    fontDesc.height=48;
+    DFBCHECK(primary->SetColor(primary, 0xff, 0x80, 0x80, 0xff));*/
+   // DFBCHECK(primary->DrawString(primary,
+     //                            /*text to be drawn*/ buffer,
+       //                          /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
+         //                        /*x coordinate of the lower left corner of the resulting text*/ 500,
+           //                      /*y coordinate of the lower left corner of the resulting text*/ 500,
+             //                    /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
     primary->Flip(primary,
                   /*region to be updated, NULL for the whole surface*/NULL,
                   /*flip flags*/0);
-
+        setTimer(3);
 }
 
 
