@@ -350,7 +350,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         }
         printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
         printf("Atype:%d apid:%d\n", atype, apid);
-
+        drawTextInfo(service_number,vpid,apid);
         if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle))
         {
             printf("Stream not removed\n");
@@ -388,7 +388,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
              {
                  printf("Audio stream created\n");
              }*/
-        drawTextInfo(service_number);
+       
     }
     else
     {

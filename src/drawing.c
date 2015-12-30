@@ -38,6 +38,15 @@ static int screenWidth = 0;
 static int screenHeight = 0;
 static DFBSurfaceDescription surfaceDesc;
 static int initialized = 0;
+  timer_t timerId;
+    struct itimerspec timerSpec;
+    struct itimerspec timerSpecOld;
+    int32_t timerFlags = 0;
+
+    IDirectFBFont *fontInterface48 = NULL;
+     DFBFontDescription fontDesc48;
+     IDirectFBFont *fontInterface20 = NULL;
+     DFBFontDescription fontDesc20;
 
 
 void fillBlack()
@@ -68,102 +77,160 @@ void initDirectFB()
     /* fetch the screen size */
     DFBCHECK(primary->GetSize(primary, &screenWidth, &screenHeight));
      
-    fillBlack();
+  //  fillBlack();
 }
 
 void deinitDirectFB()
 {
     primary->Release(primary);
     dfbInterface->Release(dfbInterface);
+    timer_delete(timerId);
 }
 
 void timerFunction()
 {
-    fillBlack();
-    printf("Timer function\n");
-    fillBlack();
-    primary->Flip(primary,
+  printf("%s started\n",__FUNCTION__);
+  primary->Flip(primary,
                   /*region to be updated, NULL for the whole surface*/NULL,
-                  /*flip flags*/0);
+                  /*flip flags*/0); 
+  fillBlack();
+  memset(&timerSpec,0,sizeof(timerSpec));
+  timer_settime(timerId,0,&timerSpec,&timerSpecOld);
+    printf("%s ended\n",__FUNCTION__);
+    
 }
 
 void setTimer(int32_t interval)
 {
     struct sigevent signalEvent;
-    timer_t timerId;
-    struct itimerspec timerSpec;
-    struct itimerspec timerSpecOld;
-    int32_t timerFlags = 0;
+  
     printf("%s started\n",__FUNCTION__);
     //brisanje strukture pre setovanja vrednosti
     memset(&timerSpec, 0, sizeof (timerSpec));
 
-    //specificiranje vremenskih podešavanja timer-a
-    timerSpec.it_value.tv_sec = interval; //3 seconds timeout
-    timerSpec.it_value.tv_nsec = 0;
     //reći OS-u da notifikaciju šalje prozivanjem specificirane funkcije iz posebne niti
     signalEvent.sigev_notify = SIGEV_THREAD;
     //funkcija koju će OS prozvati kada interval istekne
-    signalEvent.sigev_notify_function = timerFunction;
+    signalEvent.sigev_notify_function = &timerFunction;
     //argumenti funkcije
     signalEvent.sigev_value.sival_ptr = NULL;
     //atributi niti - if NULL default attributes are applied
     signalEvent.sigev_notify_attributes = NULL;
+    //specificiranje vremenskih podešavanja timer-a
+    timerSpec.it_value.tv_sec = interval; //3 seconds timeout
+    timerSpec.it_value.tv_nsec = 0;
+    
+    
     timer_create(/*sistemski sat za merenje vremena*/ CLOCK_REALTIME,
                  /*podešavanja timer-a*/ &signalEvent,
-                 /*mesto gde će se smestiti ID novog timer-a*/ &timerId);
-
-
+                 /*mesto gde će se smestiti ID novocreatefontg timer-a*/ &timerId);
+    timer_settime(timerId,timerFlags,&timerSpec,&timerSpecOld);
+    printf("%s ended\n",__FUNCTION__);
+    
 }
 
-void drawTextInfo(int32_t service_number)
+void drawTextInfo(int32_t service_number,uint16_t vpid,uint16_t apid)
 {
-    char buffer[5];
-    sprintf(buffer, "%d", service_number);
+    char buffer[50];
+     int x;
+    int y;
+    
 
 
     /* rectangle drawing */
 
     fillBlack();
-
+    x=1*screenWidth/4;
+    y=5*screenHeight/8;
     
-   
- DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
-                               /*red*/ 0xFF,
-                               /*green*/ 0x00,
+    
+    
+    DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
+                               /*red*/ 0x00,
+                               /*green*/ 0xFF,
                                /*blue*/ 0x00,
                                /*alpha*/ 0x88));
     primary->FillRectangle(/*surface to draw on*/ primary,
-                           /*upper left x coordinate*/ 1*screenWidth/4,
-                           /*upper left y coordinate*/ 3*screenHeight/8,
+                           /*upper left x coordinate*/ x,
+                           /*upper left y coordinate*/ y,
                            /*rectangle width*/ 2*screenWidth/4,
                            /*rectangle height*/ 2*screenHeight/8);
     /* create the font and set the created font for primary surface text drawing */
-     IDirectFBFont *fontInterface = NULL;
-     DFBFontDescription fontDesc;
-   DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc, &fontInterface));
-    DFBCHECK(primary->SetFont(primary, fontInterface));
- fontDesc.flags = DFDESC_HEIGHT;
-    fontDesc.height = 48;
+    
+    
+    
+     
+     DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc48, &fontInterface48));
+    DFBCHECK(primary->SetFont(primary, fontInterface48));
+     
+     sprintf(buffer, "Channel %d\0", service_number);
+    fontDesc48.flags = DFDESC_HEIGHT;
+    fontDesc48.height = 48;
     /* draw the text */
      DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
                                /*red*/ 0xFF,
                                /*green*/ 0xFF,
                                /*blue*/ 0xFF,
-                               /*alpha*/ 0xFF));
+                               /*alpha*/ 0x00));
+     x=x+58;
+     y=y+58;
     DFBCHECK(primary->DrawString(primary,
                                  /*text to be drawn*/ buffer,
                                  /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
-                                 /*x coordinate of the lower left corner of the resulting text*/ 3*screenHeight/8,
-                                 /*y coordinate of the lower left corner of the resulting text*/ 1*screenHeight,
+                                 /*x coordinate of the lower left corner of the resulting text*/ x,
+                                 /*y coordinate of the lower left corner of the resulting text*/ y,
                                  /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
+    
+    fontInterface48->Release(fontInterface48);
+    
+    
+    DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc20, &fontInterface20));
+    DFBCHECK(primary->SetFont(primary, fontInterface20));
+     
+    fontDesc20.flags = DFDESC_HEIGHT;
+    fontDesc20.height = 20;
+    /* draw the text */
+    sprintf(buffer, "Video PID %d\0", vpid);
+     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
+                               /*red*/ 0xFF,
+                               /*green*/ 0xFF,
+                               /*blue*/ 0xFF,
+                               /*alpha*/ 0x00));
+     y=y+58;
+    DFBCHECK(primary->DrawString(primary,
+                                 /*text to be drawn*/ buffer,
+                                 /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
+                                 /*x coordinate of the lower left corner of the resulting text*/ x,
+                                 /*y coordinate of the lower left corner of the resulting text*/ y,
+                                 /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
+    sprintf(buffer, "Audio PID %d\0", apid);
+     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
+                               /*red*/ 0xFF,
+                               /*green*/ 0xFF,
+                               /*blue*/ 0xFF,
+                               /*alpha*/ 0x00));
+     y=y+20;
+    DFBCHECK(primary->DrawString(primary,
+                                 /*text to be drawn*/ buffer,
+                                 /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
+                                 /*x coordinate of the lower left corner of the resulting text*/ x,
+                                 /*y coordinate of the lower left corner of the resulting text*/ y,
+                                 /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
+    fontInterface20->Release(fontInterface20);
+     
     primary->Flip(primary,
                   /*region to be updated, NULL for the whole surface*/NULL,
                   /*flip flags*/0);
-    //setTimer(3);
-    sleep(3);
-    timerFunction();
+     printf("createfont\n");
+    
+   setTimer(3);
 }
+
+
+void drawVolume(int32_t volume){
+}
+
+
 
 
 
