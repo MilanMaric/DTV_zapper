@@ -37,6 +37,7 @@ typedef struct _Handles
 int deviceInit(config_parameters *parms, DeviceHandle *handle);
 void deviceDeInit(DeviceHandle *handle);
 int32_t remoteServiceCallback(uint32_t service_number);
+int32_t remoteVolumeCallback(uint32_t service);
 uint8_t getParsedTag();
 
 #endif	/* DEVICE_CONTROL_H */

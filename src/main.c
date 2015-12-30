@@ -53,7 +53,7 @@ int32_t main(int32_t argc, char** argv)
         return ERROR;
     }
     registerServiceNumberRemoteCallBack(remoteServiceCallback);
-    //deinitDirectFB();
+    registerVolumeRemoteCallback(remoteVolumeCallback);
     pthread_join(remote_thread, NULL);
     deviceDeInit(&handle);
     deinitDirectFB();

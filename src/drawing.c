@@ -231,7 +231,8 @@ void drawVolume(int32_t volume)
     IDirectFBSurface *surface = NULL;
     int32_t surfaceHeight, surfaceWidth;
     char buffer[50];
-    sprintf(buffer, "/assets/volume_%d.png\0", volume);
+    sprintf(buffer, "volume_%d.png\0", volume);
+    printf("%s : buffer %s\n",__FUNCTION__,buffer);
     /* create the image provider for the specified file */
     DFBCHECK(dfbInterface->CreateImageProvider(dfbInterface, buffer, &provider));
     /* get surface descriptor for the surface where the image will be rendered */
@@ -251,6 +252,8 @@ void drawVolume(int32_t volume)
                            /*source region, NULL to blit the whole surface*/ NULL,
                            /*destination x coordinate of the upper left corner of the image*/50,
                            /*destination y coordinate of the upper left corner of the image*/screenHeight - surfaceHeight - 50));
+    primary->Flip(primary,NULL,0);
+    setTimer(3);
 }
 
 

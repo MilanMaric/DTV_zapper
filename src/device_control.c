@@ -398,13 +398,22 @@ int32_t remoteServiceCallback(uint32_t service_number)
     return NO_ERROR;
 }
 
-uint32_t remoteVolumeCallback(uint16_t service)
+int32_t remoteVolumeCallback(uint32_t service)
 {
-    if (service == VOLUME_PLUS)
-        printf("Volume plus");
+  static uint8_t volume=0;
+    if (service == VOLUME_PLUS){
+        printf("Volume plus\n");
+	volume++;
+	volume=volume>=10?10:volume;
+	drawVolume(volume);
+    }
 
-    if (service == VOLUME_MINUS)
-        printf("Volume minus");
+    if (service == VOLUME_MINUS){
+        printf("Volume minus\n");
+	if(volume!=0)
+	  volume--;
+	drawVolume(volume);
+    }
 }
 
 uint8_t getParsedTag()
