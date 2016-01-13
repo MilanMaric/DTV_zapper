@@ -48,6 +48,8 @@ DFBFontDescription fontDesc48;
 IDirectFBFont *fontInterface20 = NULL;
 DFBFontDescription fontDesc20;
 
+int16_t settedTimer=0;
+
 void fillBlack()
 {
     printf("fill black\n");
@@ -61,6 +63,7 @@ void fillBlack()
                            /*upper left y coordinate*/ 0,
                            /*rectangle width*/ screenWidth,
                            /*rectangle height*/ screenHeight);
+    
 }
 
 void initDirectFB()
@@ -89,12 +92,12 @@ void deinitDirectFB()
 void timerFunction()
 {
     printf("%s started\n", __FUNCTION__);
-    primary->Flip(primary,
-                  /*region to be updated, NULL for the whole surface*/NULL,
-                  /*flip flags*/0);
+    fillBlack();
+    primary->Flip(primary,NULL,0);
     fillBlack();
     memset(&timerSpec, 0, sizeof (timerSpec));
     timer_settime(timerId, 0, &timerSpec, &timerSpecOld);
+    settedTimer=0;
     printf("%s ended\n", __FUNCTION__);
 
 }
@@ -118,8 +121,9 @@ void setTimer(int32_t interval)
     //specificiranje vremenskih podešavanja timer-a
     timerSpec.it_value.tv_sec = interval; //3 seconds timeout
     timerSpec.it_value.tv_nsec = 0;
-
-
+    if(settedTimer)
+    timer_delete(timerId);
+    settedTimer=1;
     timer_create(/*sistemski sat za merenje vremena*/ CLOCK_REALTIME,
                  /*podešavanja timer-a*/ &signalEvent,
                  /*mesto gde će se smestiti ID novocreatefontg timer-a*/ &timerId);
@@ -141,8 +145,6 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid)
     fillBlack();
     x = 1 * screenWidth / 4;
     y = 5 * screenHeight / 8;
-
-
 
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
                                /*red*/ 0x00,
@@ -225,6 +227,7 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid)
     setTimer(3);
 }
 
+
 void drawVolume(int32_t volume)
 {
     IDirectFBImageProvider *provider;
@@ -232,6 +235,7 @@ void drawVolume(int32_t volume)
     int32_t surfaceHeight, surfaceWidth;
     char buffer[50];
     sprintf(buffer, "volume_%d.png\0", volume);
+    fillBlack();
     printf("%s : buffer %s\n",__FUNCTION__,buffer);
     /* create the image provider for the specified file */
     DFBCHECK(dfbInterface->CreateImageProvider(dfbInterface, buffer, &provider));

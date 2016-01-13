@@ -54,6 +54,11 @@ DeviceHandle *globHandle;
 int32_t indicator = 0;
 int32_t currentStream = 0;
 
+uint16_t vpid = 0;
+    uint8_t vtype = 0;
+    uint8_t atype = 0;
+    uint16_t apid = 0;
+
 int32_t tunerStatusCallback(t_LockStatus status)
 {
     if (status == STATUS_LOCKED)
@@ -144,6 +149,48 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
     //  dumpPmtTable(pmtTable[indicator]);
     Demux_Unregister_Section_Filter_Callback(pmt_Demux_Section_Filter_Callback);
     printf("%s : pmt section filter unregistered\n", __FUNCTION__);
+    Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
+    printf("%s : filter free\n", __FUNCTION__);
+    printf("%s ended", __FUNCTION__);
+    return NO_ERROR;
+}
+
+int32_t eit_Demux_Section_Filter_Callback(uint8_t *buffer){
+ 
+}
+
+int32_t initEitParsing(){
+   static struct timespec lockStatusWaitTime;
+    static struct timeval now;
+    gettimeofday(&now, NULL);
+    lockStatusWaitTime.tv_sec = now.tv_sec + 10;
+    if (Demux_Set_Filter(handle->playerHandle, 0x4E, 0x12, &(handle->filterHandle)))
+    {
+        printf("\n%s:ERROR Set filter failure!\n", __FUNCTION__);
+        return ERROR;
+    }
+    printf("%s : pmt set filter\n", __FUNCTION__);
+
+    if (Demux_Register_Section_Filter_Callback(eit_Demux_Section_Filter_Callback))
+    {
+        printf("\n%s:ERROR Register Section filter failure!\n", __FUNCTION__);
+        Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
+        return ERROR;
+    }
+    printf("%s : pmt register section filter\n", __FUNCTION__);
+
+    pthread_mutex_lock(&pmtMutex);
+    if (ETIMEDOUT == pthread_cond_timedwait(&eitCondition, &eitMutex, &lockStatusWaitTime))
+    {
+        printf("\n%s:ERROR Lock timeout exceeded!\n", __FUNCTION__);
+        Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
+        return ERROR;
+    }
+    pthread_mutex_unlock(&eitMutex);
+    printf("%s : eit parsed\n", __FUNCTION__);
+    //  dumpPmtTable(pmtTable[indicator]);
+    Demux_Unregister_Section_Filter_Callback(pmt_Demux_Section_Filter_Callback);
+    printf("%s : eit section filter unregistered\n", __FUNCTION__);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
     printf("%s : filter free\n", __FUNCTION__);
     printf("%s ended", __FUNCTION__);
@@ -317,11 +364,11 @@ void deviceDeInit(DeviceHandle *handle)
 
 int32_t remoteServiceCallback(uint32_t service_number)
 {
-    uint16_t vpid = 0;
-    uint8_t vtype = 0;
-    uint8_t atype = 0;
-    uint16_t apid = 0;
-    uint8_t type = 0;
+     vpid = 0;
+     vtype = 0;
+     atype = 0;
+     apid = 0;
+     type = 0;
     int16_t i = 0;
     uint8_t number;
     if (parsedTag == 0)
@@ -374,20 +421,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         {
             printf("This service doesent contain video\n");
         }
-        /*       if(Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->aStreamHandle)){
-             printf("Video stream not removed\n");
-             }else{
-                 printf("Stream removed\n");
-             }
-      
-             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->aStreamHandle)))
-             {
-                 printf("Player stream not created\n");
-             }
-             else
-             {
-                 printf("Audio stream created\n");
-             }*/
+   
        
     }
     else

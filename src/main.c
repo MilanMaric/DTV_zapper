@@ -36,25 +36,40 @@ int32_t main(int32_t argc, char** argv)
 {
     DeviceHandle handle;
     config_parameters parms;
-    /* initialize DirectFB */
     DFBCHECK(DirectFBInit(&argc, &argv));
     initDirectFB();
+    if(argc==2){
     if (parseConfig(&parms, argv[1]) == ERROR)
     {
         printf("%s : ERROR while parsing configuration\n", __FUNCTION__);
+	deinitDirectFB();
         return ERROR;
+    }
+    }else{
+      if (parseConfig(&parms, "/home/my_config/config.ini") == ERROR)
+    {
+        printf("%s : ERROR while parsing configuration\n", __FUNCTION__);
+	deinitDirectFB();
+        return ERROR;
+    }
     }
     dumpConfig(&parms);
     pthread_t remote_thread;
-    pthread_create(&remote_thread, NULL, &remoteControlThread, NULL);
     if (deviceInit(&parms, &handle) == ERROR)
     {
         printf("%s : ERROR while init \n", __FUNCTION__);
+	 deinitDirectFB();
+	 deviceDeInit(&handle);
         return ERROR;
     }
+    
+    
+    pthread_create(&remote_thread, NULL, &remoteControlThread, NULL);
     registerServiceNumberRemoteCallBack(remoteServiceCallback);
     registerVolumeRemoteCallback(remoteVolumeCallback);
     pthread_join(remote_thread, NULL);
+    
+    
     deviceDeInit(&handle);
     deinitDirectFB();
     return 0;
