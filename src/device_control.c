@@ -45,12 +45,15 @@ static pthread_mutex_t patMutex = PTHREAD_MUTEX_INITIALIZER;
 
 static pthread_cond_t pmtCondition = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t pmtMutex = PTHREAD_MUTEX_INITIALIZER;
+
+static pthread_cond_t eitCondition = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t eitMutex = PTHREAD_MUTEX_INITIALIZER;
 static uint8_t parsedTag = 0;
 
 PatTable* patTable;
 PmtTable** pmtTable;
 DeviceHandle *globHandle;
-
+EitTable* eitTable=NULL;
 int32_t indicator = 0;
 int32_t currentStream = 0;
 
@@ -156,20 +159,27 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
 }
 
 int32_t eit_Demux_Section_Filter_Callback(uint8_t *buffer){
- 
+ parseEitTable(buffer,eitTable);
+ dumpEitTable(eitTable);
+ pthread_mutex_lock(&eitMutex);
+        pthread_cond_signal(&eitCondition);
+        pthread_mutex_unlock(&eitMutex);
 }
 
-int32_t initEitParsing(){
+int32_t initEitParsing(DeviceHandle* handle){
    static struct timespec lockStatusWaitTime;
     static struct timeval now;
+    if(eitTable==NULL)
+      free(eitTable);
+    eitTable=(EitTable*) malloc(sizeof(EitTable));
     gettimeofday(&now, NULL);
     lockStatusWaitTime.tv_sec = now.tv_sec + 10;
-    if (Demux_Set_Filter(handle->playerHandle, 0x4E, 0x12, &(handle->filterHandle)))
+    if (Demux_Set_Filter(handle->playerHandle,0x12 ,0x4E, &(handle->filterHandle)))
     {
         printf("\n%s:ERROR Set filter failure!\n", __FUNCTION__);
         return ERROR;
     }
-    printf("%s : pmt set filter\n", __FUNCTION__);
+    printf("%s : eit set filter\n", __FUNCTION__);
 
     if (Demux_Register_Section_Filter_Callback(eit_Demux_Section_Filter_Callback))
     {
@@ -177,7 +187,7 @@ int32_t initEitParsing(){
         Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
         return ERROR;
     }
-    printf("%s : pmt register section filter\n", __FUNCTION__);
+    printf("%s : eit register section filter\n", __FUNCTION__);
 
     pthread_mutex_lock(&pmtMutex);
     if (ETIMEDOUT == pthread_cond_timedwait(&eitCondition, &eitMutex, &lockStatusWaitTime))
@@ -189,7 +199,7 @@ int32_t initEitParsing(){
     pthread_mutex_unlock(&eitMutex);
     printf("%s : eit parsed\n", __FUNCTION__);
     //  dumpPmtTable(pmtTable[indicator]);
-    Demux_Unregister_Section_Filter_Callback(pmt_Demux_Section_Filter_Callback);
+    Demux_Unregister_Section_Filter_Callback(eit_Demux_Section_Filter_Callback);
     printf("%s : eit section filter unregistered\n", __FUNCTION__);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
     printf("%s : filter free\n", __FUNCTION__);
@@ -333,6 +343,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     {
         return ERROR;
     }
+    
     pmtTable = (PmtTable**) malloc(patTable->serviceInfoCount * sizeof (PmtTable*));
     for (i = 1; i < patTable->serviceInfoCount; i++)
     {
@@ -346,6 +357,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
             return ERROR;
         }
     }
+    initEitParsing(handle);
     globHandle = handle;
     parsedTag = 1;
     return NO_ERROR;
@@ -368,7 +380,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
      vtype = 0;
      atype = 0;
      apid = 0;
-     type = 0;
+    int16_t type = 0;
     int16_t i = 0;
     uint8_t number;
     if (parsedTag == 0)
