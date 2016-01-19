@@ -383,10 +383,7 @@ void deviceDeInit(DeviceHandle *handle)
 
 int32_t remoteServiceCallback(uint32_t service_number)
 {
-    vpid = 0;
-    vtype = 0;
-    atype = 0;
-    apid = 0;
+    
     int16_t type = 0;
     int16_t i = 0;
     uint8_t number;
@@ -396,6 +393,10 @@ int32_t remoteServiceCallback(uint32_t service_number)
         printf("%s pressed button of current service number", __FUNCTION__);
         return NO_ERROR;
     }
+    vpid = 0;
+    vtype = 0;
+    atype = 0;
+    apid = 0;
     currentServiceNumber = service_number;
     if (parsedTag == 0)
     {
