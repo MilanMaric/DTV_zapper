@@ -47,5 +47,5 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid);
 void initDirectFB();
 void deinitDirectFB();
 void drawVolume(int32_t volume);
-
+void fillBlack();
 #endif
