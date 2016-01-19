@@ -389,9 +389,16 @@ int32_t remoteServiceCallback(uint32_t service_number)
     uint8_t number;
     if (service_number == currentServiceNumber)
     {
-        drawTextInfo(currentServiceNumber, vpid, apid);
-        printf("%s pressed button of current service number", __FUNCTION__);
-        return NO_ERROR;
+        if (vpid != 0)
+        {
+            drawTextInfo(currentServiceNumber, vpid, apid);
+            printf("%s pressed button of current service number", __FUNCTION__);
+            return NO_ERROR;
+        }
+        else
+        {
+            return ERROR;
+        }
     }
     vpid = 0;
     vtype = 0;
