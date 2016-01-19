@@ -341,8 +341,8 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     {
         printf("%s audio opened", __FUNCTION__);
     }
-    printf("Audio %d %d \n", parms->aPid, parms->aType);
-    printf("Video %d %d \n", parms->vPid, parms->vType);
+    //   printf("Audio %d %d \n", parms->aPid, parms->aType);
+    //  printf("Video %d %d \n", parms->vPid, parms->vType);
     apid = parms->aPid;
     vpid = parms->vPid;
     //printf("%s: Player_Stream_Create\n", __FUNCTION__);
@@ -410,7 +410,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         for (i = 0; i < number; i++)
         {
             type = pmtTable[service_number]->pmtServiceInfoArray[i].stream_type;
-            //  printf("type: %d,", type);
+            //printf("type: %d,", type);
             if (type == 0x01 || type == 0x02)
             {
                 vpid = pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
@@ -453,10 +453,6 @@ int32_t remoteServiceCallback(uint32_t service_number)
             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, apid, atype, &(globHandle->aStreamHandle)))
             {
                 printf("Player stream not created\n");
-            }
-            else
-            {
-                printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
             }
         }
     }
