@@ -160,7 +160,7 @@ void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArra
         poc += 2;
         if (pmtServiceInfoArray[i].es_info_length > 0)
         {
-            *teletekst = (*(buffer + poc));
+            *teletekst = (*(buffer + poc+1));
             printf("---:: %x\n", *teletekst);
         }
         poc += pmtServiceInfoArray[i].es_info_length;
