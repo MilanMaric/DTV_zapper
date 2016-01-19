@@ -38,6 +38,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle);
 void deviceDeInit(DeviceHandle *handle);
 int32_t remoteServiceCallback(uint32_t service_number);
 int32_t remoteVolumeCallback(uint32_t service);
+int32_t remoteInfoCallback(uint32_t code);
 uint8_t getParsedTag();
 
 #endif	/* DEVICE_CONTROL_H */

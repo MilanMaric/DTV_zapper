@@ -38,38 +38,42 @@ int32_t main(int32_t argc, char** argv)
     config_parameters parms;
     DFBCHECK(DirectFBInit(&argc, &argv));
     initDirectFB();
-    if(argc==2){
-    if (parseConfig(&parms, argv[1]) == ERROR)
+    if (argc == 2)
     {
-        printf("%s : ERROR while parsing configuration\n", __FUNCTION__);
-	deinitDirectFB();
-        return ERROR;
+        if (parseConfig(&parms, argv[1]) == ERROR)
+        {
+            printf("%s : ERROR while parsing configuration\n", __FUNCTION__);
+            deinitDirectFB();
+            return ERROR;
+        }
     }
-    }else{
-      if (parseConfig(&parms, "/home/my_config/config.ini") == ERROR)
+    else
     {
-        printf("%s : ERROR while parsing configuration\n", __FUNCTION__);
-	deinitDirectFB();
-        return ERROR;
-    }
+        if (parseConfig(&parms, "/home/my_config/config.ini") == ERROR)
+        {
+            printf("%s : ERROR while parsing configuration\n", __FUNCTION__);
+            deinitDirectFB();
+            return ERROR;
+        }
     }
     dumpConfig(&parms);
     pthread_t remote_thread;
     if (deviceInit(&parms, &handle) == ERROR)
     {
         printf("%s : ERROR while init \n", __FUNCTION__);
-	 deinitDirectFB();
-	 deviceDeInit(&handle);
+        deinitDirectFB();
+        deviceDeInit(&handle);
         return ERROR;
     }
-    
-    
-    pthread_create(&remote_thread, NULL, &remoteControlThread, NULL);
+
     registerServiceNumberRemoteCallBack(remoteServiceCallback);
     registerVolumeRemoteCallback(remoteVolumeCallback);
+    registerInfoButtonCallback(remoteInfoCallback);
+    pthread_create(&remote_thread, NULL, &remoteControlThread, NULL);
+
     pthread_join(remote_thread, NULL);
-    
-    
+
+
     deviceDeInit(&handle);
     deinitDirectFB();
     return 0;

@@ -31,8 +31,7 @@ SOFTWARE.
 
 #define NON_STOP    1
 
-typedef enum remoteButton_Code
-{
+typedef enum remoteButton_Code {
     REMOTE_BTN_NUM_1 = 2,
     REMOTE_BTN_NUM_2 = 3,
     REMOTE_BTN_NUM_3 = 4,
@@ -54,8 +53,7 @@ typedef enum remoteButton_Code
     REMOTE_BTN_EXIT = 102
 } remoteButtonCode;
 
-typedef enum
-{
+typedef enum {
     VOLUME_PLUS = 1,
     VOLUME_MINUS
 } RemoteVolumeCode;
@@ -64,6 +62,7 @@ typedef int32_t(*Remote_Control_Callback)(uint32_t code);
 
 void registerServiceNumberRemoteCallBack(Remote_Control_Callback remote_ControllCallback);
 void registerVolumeRemoteCallback(Remote_Control_Callback remoteControllCallback);
+void registerInfoButtonCallback(Remote_Control_Callback remoteControllCallback);
 
 void* remoteControlThread(void*);
 

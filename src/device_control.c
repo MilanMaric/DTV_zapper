@@ -53,14 +53,15 @@ static uint8_t parsedTag = 0;
 PatTable* patTable;
 PmtTable** pmtTable;
 DeviceHandle *globHandle;
-EitTable* eitTable=NULL;
+EitTable* eitTable = NULL;
 int32_t indicator = 0;
 int32_t currentStream = 0;
 
 uint16_t vpid = 0;
-    uint8_t vtype = 0;
-    uint8_t atype = 0;
-    uint16_t apid = 0;
+uint8_t vtype = 0;
+uint8_t atype = 0;
+uint16_t apid = 0;
+uint32_t currentServiceNumber = 1;
 
 int32_t tunerStatusCallback(t_LockStatus status)
 {
@@ -158,23 +159,25 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
     return NO_ERROR;
 }
 
-int32_t eit_Demux_Section_Filter_Callback(uint8_t *buffer){
- parseEitTable(buffer,eitTable);
- dumpEitTable(eitTable);
- pthread_mutex_lock(&eitMutex);
-        pthread_cond_signal(&eitCondition);
-        pthread_mutex_unlock(&eitMutex);
+int32_t eit_Demux_Section_Filter_Callback(uint8_t *buffer)
+{
+    parseEitTable(buffer, eitTable);
+    dumpEitTable(eitTable);
+    pthread_mutex_lock(&eitMutex);
+    pthread_cond_signal(&eitCondition);
+    pthread_mutex_unlock(&eitMutex);
 }
 
-int32_t initEitParsing(DeviceHandle* handle){
-   static struct timespec lockStatusWaitTime;
+int32_t initEitParsing(DeviceHandle* handle)
+{
+    static struct timespec lockStatusWaitTime;
     static struct timeval now;
-    if(eitTable==NULL)
-      free(eitTable);
-    eitTable=(EitTable*) malloc(sizeof(EitTable));
+    if (eitTable == NULL)
+        free(eitTable);
+    eitTable = (EitTable*) malloc(sizeof (EitTable));
     gettimeofday(&now, NULL);
     lockStatusWaitTime.tv_sec = now.tv_sec + 10;
-    if (Demux_Set_Filter(handle->playerHandle,0x12 ,0x4E, &(handle->filterHandle)))
+    if (Demux_Set_Filter(handle->playerHandle, 0x12, 0x4E, &(handle->filterHandle)))
     {
         printf("\n%s:ERROR Set filter failure!\n", __FUNCTION__);
         return ERROR;
@@ -265,7 +268,6 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     static struct timeval now;
     int i;
     uint32_t freqHz = parms->frequency*MHZ;
-    printf("%s: started\n", __FUNCTION__);
     /*Initialize tuner device*/
     if (Tuner_Init())
     {
@@ -330,6 +332,8 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     }
     printf("Audio %d %d \n", parms->aPid, parms->aType);
     printf("Video %d %d \n", parms->vPid, parms->vType);
+    apid = parms->aPid;
+    vpid = parms->vPid;
     if (Player_Stream_Create(handle->playerHandle, handle->sourceHandle, parms->aPid, parms->aType, &(handle->aStreamHandle)))
     {
         printf("%s Player_Source_Open failed", __FUNCTION__);
@@ -343,7 +347,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     {
         return ERROR;
     }
-    
+
     pmtTable = (PmtTable**) malloc(patTable->serviceInfoCount * sizeof (PmtTable*));
     for (i = 1; i < patTable->serviceInfoCount; i++)
     {
@@ -376,10 +380,10 @@ void deviceDeInit(DeviceHandle *handle)
 
 int32_t remoteServiceCallback(uint32_t service_number)
 {
-     vpid = 0;
-     vtype = 0;
-     atype = 0;
-     apid = 0;
+    vpid = 0;
+    vtype = 0;
+    atype = 0;
+    apid = 0;
     int16_t type = 0;
     int16_t i = 0;
     uint8_t number;
@@ -409,7 +413,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         }
         printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
         printf("Atype:%d apid:%d\n", atype, apid);
-        drawTextInfo(service_number,vpid,apid);
+        drawTextInfo(service_number, vpid, apid);
         if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle))
         {
             printf("Stream not removed\n");
@@ -433,36 +437,66 @@ int32_t remoteServiceCallback(uint32_t service_number)
         {
             printf("This service doesent contain video\n");
         }
-   
-       
+
+        if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->aStreamHandle))
+        {
+            printf("Stream not removed\n");
+        }
+        else
+        {
+            printf("Video stream removed\n");
+        }
+        if (vtype != 0 && vpid != 0)
+        {
+            if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->aStreamHandle)))
+            {
+                printf("Player stream not created\n");
+            }
+            else
+            {
+                printf("Audio stream created\n");
+            }
+        }
+        else
+        {
+            printf("This service doesn't contain video\n");
+        }
+
+
     }
     else
     {
         printf("No!\n");
     }
-
     return NO_ERROR;
 }
 
 int32_t remoteVolumeCallback(uint32_t service)
 {
-  static uint8_t volume=0;
-    if (service == VOLUME_PLUS){
+    static uint8_t volume = 0;
+    if (service == VOLUME_PLUS)
+    {
         printf("Volume plus\n");
-	volume++;
-	volume=volume>=10?10:volume;
-	drawVolume(volume);
+        volume++;
+        volume = volume >= 10 ? 10 : volume;
+        drawVolume(volume);
     }
 
-    if (service == VOLUME_MINUS){
+    if (service == VOLUME_MINUS)
+    {
         printf("Volume minus\n");
-	if(volume!=0)
-	  volume--;
-	drawVolume(volume);
+        if (volume != 0)
+            volume--;
+        drawVolume(volume);
     }
 }
 
 uint8_t getParsedTag()
 {
     return parsedTag;
+}
+
+int32_t remoteInfoCallback(uint32_t code)
+{
+    drawTextInfo(currentServiceNumber, vpid, apid);
 }

@@ -37,6 +37,7 @@ SOFTWARE.
 static int32_t inputFileDesc;
 static Remote_Control_Callback sectionNumberCallback;
 static Remote_Control_Callback volumeCallback;
+static Remote_Control_Callback infoCallback;
 
 int32_t getKeys(int32_t count, uint8_t* buf, int32_t* eventRead);
 
@@ -46,6 +47,11 @@ void registerServiceNumberRemoteCallBack(Remote_Control_Callback remote_Controll
 }
 
 void registerVolumeRemoteCallback(Remote_Control_Callback remoteControllCallback)
+{
+    volumeCallback = remoteControllCallback;
+}
+
+void registerInfoButtonCallback(Remote_Control_Callback remoteControllCallback)
 {
     volumeCallback = remoteControllCallback;
 }
@@ -79,7 +85,6 @@ void* remoteControlThread(void* nn)
 
     while (NON_STOP)
     {
-
         if (getKeys(NUM_EVENTS, (uint8_t*) eventBuf, &eventCnt))
         {
             printf("Error while reading input events !");
@@ -108,6 +113,7 @@ void* remoteControlThread(void* nn)
                         volumeCallback(VOLUME_MINUS);
                     break;
                 case REMOTE_BTN_INFO:
+                    infoCallback(1);
                     break;
                 case REMOTE_BTN_EXIT:
                     return;

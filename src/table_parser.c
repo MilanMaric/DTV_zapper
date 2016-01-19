@@ -1,3 +1,26 @@
+/****************************************************************************
+ *
+ * Univerzitet u Banjoj Luci, Elektrotehnicki fakultet
+ *
+ * -----------------------------------------------------
+ * Ispitni zadatak iz predmeta:
+ *
+ * MULTIMEDIJALNI SISTEMI
+ * -----------------------------------------------------
+ * Naslov zadatka (npr. DVB Sniffer za EIT/SDT)
+ * -----------------------------------------------------
+ *
+ * \file table_parser.c
+ * \brief
+ * Ovaj modul realizuje parsiranje PMT,PAT i EIT tabela, uz postojanje fukcija za
+ * ispis sadrzaja na standardni izlaz.
+ * 
+ * @Author Petar Petrovic
+ * \notes
+ *
+ * \history
+ * 11.05.2009. Ispravljena greska pri parsiranju EIT zaglavlja.
+ *****************************************************************************/
 /*
  The MIT License (MIT)
 
@@ -31,6 +54,20 @@ SOFTWARE.
 #include <stdint.h>
 #include <string.h>
 
+/****************************************************************************
+ *
+ * @brief
+ Ova funkcija implementira parsiranje niza PAT servisnih informacija
+ *
+ * @param
+buffer - [in] Ulazni bafer sekcija
+patServiceInfoArray - [out] Izlazni niz servisnih informacija 
+ *                  (mora biti alociran memorijski prostor sa smjestanje niza) 
+ * 
+section_length - [in] polje section_length iz odgovarajuce PAT tabele
+ * , tako da se moze proracunati broj servisnih informacija
+ *
+ *****************************************************************************/
 void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArray[], uint16_t section_length)
 {
     int brojPidova = (section_length - 10) / 4;
@@ -162,33 +199,33 @@ void dumpPmtTable(PmtTable* pmtTable)
     }
 }
 
+void parseEitTable(uint8_t* buffer, EitTable* table)
+{
+    (*table).table_id = (uint8_t) (*(buffer + 0));
+    (*table).section_syntax_indicator = (uint8_t) (*(buffer + 1) << 7);
+    (*table).section_length = (uint16_t) (((*(buffer + 1) << 8) + *(buffer + 2))
+            & 0x0FFF);
+    (*table).service_id = (uint16_t) ((*(buffer + 3) << 8) + *(buffer + 4));
+    (*table).version_number = (uint8_t) *(buffer + 5) & 0x3E;
+    (*table).current_next_indicator = (uint8_t) *(buffer + 5) & 0x01;
+    (*table).section_number = (uint8_t) *(buffer + 6);
+    (*table).last_section_number = (uint8_t) *(buffer + 7);
+    (*table).transport_stream_id = (uint8_t) (*(buffer + 8) << 8)
+            + *(buffer + 9);
 
-
-void parseEitTable(uint8_t* buffer, EitTable* table) {
-	(*table).table_id = (uint8_t) (*(buffer + 0));
-	(*table).section_syntax_indicator = (uint8_t) (*(buffer + 1) << 7);
-	(*table).section_length = (uint16_t) (((*(buffer + 1) << 8) + *(buffer + 2))
-			& 0x0FFF);
-	(*table).service_id = (uint16_t) ((*(buffer + 3) << 8) + *(buffer + 4));
-	(*table).version_number = (uint8_t) *(buffer + 5) & 0x3E;
-	(*table).current_next_indicator = (uint8_t) *(buffer + 5) & 0x01;
-	(*table).section_number = (uint8_t) *(buffer + 6);
-	(*table).last_section_number = (uint8_t) *(buffer + 7);
-	(*table).transport_stream_id = (uint8_t) (*(buffer + 8) << 8)
-			+ *(buffer + 9);
-			
 }
-void dumpEitTable(EitTable* table) {
-	printf("\n<<<<<<<<<<<<<<<<EIT table>>>>>>>>>>>>>>>>>>\n");
-	printf("Table id: %d\n", table->table_id);
-	printf("Section syntax indicator %d\n", table->section_syntax_indicator);
-	printf("Section length %d\n", table->section_length);
-	printf("Service id %d\n", table->service_id);
-	printf("Version number %d\n", table->version_number);
-	printf("current_next_indicator %d\n", table->current_next_indicator);
-	printf("section_number %d\n", table->section_number);
-	printf("last_section_number %d\n", table->last_section_number);
-	printf("transport_stream_id %d\n", table->transport_stream_id);
 
-	printf("<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>\n");
+void dumpEitTable(EitTable* table)
+{
+    printf("\n<<<<<<<<<<<<<<<<EIT table>>>>>>>>>>>>>>>>>>\n");
+    printf("Table id: %d\n", table->table_id);
+    printf("Section syntax indicator %d\n", table->section_syntax_indicator);
+    printf("Section length %d\n", table->section_length);
+    printf("Service id %d\n", table->service_id);
+    printf("Version number %d\n", table->version_number);
+    printf("current_next_indicator %d\n", table->current_next_indicator);
+    printf("section_number %d\n", table->section_number);
+    printf("last_section_number %d\n", table->last_section_number);
+    printf("transport_stream_id %d\n", table->transport_stream_id);
+    printf("<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>\n");
 }

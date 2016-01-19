@@ -33,8 +33,7 @@ SOFTWARE.
 
 #define MHZ 1000000U
 
-typedef struct config_parameters_s
-{
+typedef struct config_parameters_s {
     uint32_t frequency;
     uint32_t bandwidth;
     uint32_t aPid;
