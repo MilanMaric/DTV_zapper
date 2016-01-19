@@ -389,7 +389,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
     uint8_t number;
     if (service_number == currentServiceNumber)
     {
-        if (vpid != 0)
+        if (service_number <= patTable->serviceInfoCount)
         {
             drawTextInfo(currentServiceNumber, vpid, apid);
             printf("%s pressed button of current service number", __FUNCTION__);

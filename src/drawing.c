@@ -283,7 +283,7 @@ void drawVolume(int32_t volume)
                            /*source surface*/ surface,
                            /*source region, NULL to blit the whole surface*/ NULL,
                            /*destination x coordinate of the upper left corner of the image*/50,
-                           /*destination y coordinate of the upper left corner of the image*/screenHeight - surfaceHeight - 50));
+                           /*destination y coordinate of the upper left corner of the image*/ 50));
     primary->Flip(primary, NULL, 0);
     setTimer(3);
 }
