@@ -138,22 +138,24 @@ void* remoteControlThread(void* nn)
                         infoCallback(1);
                     break;
                 case REMOTE_BTN_EXIT:
+                    free(eventBuf);
                     return;
                 default:
                     tmp_number = remoteCheckServiceNumberCode(eventBuf[i].code);
                     if (tmp_number != -1)
                     {
                         service_number = tmp_number;
+                        printf("Service number: %d tmp_number\n", service_number);
+                        sectionNumberCallback(service_number);
                     }
                 }
-                printf("Service number: %d tmp_number\n", service_number);
-                if (sectionNumberCallback != NULL && tmp_number2 != service_number)
-                    sectionNumberCallback(service_number);
+                
             }
-
         }
+
     }
-    free(eventBuf);
+}
+free(eventBuf);
 }
 
 int32_t remoteCheckServiceNumberCode(int32_t code)

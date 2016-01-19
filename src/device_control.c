@@ -330,10 +330,6 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         Tuner_Deinit();
         return ERROR;
     }
-    printf("Audio %d %d \n", parms->aPid, parms->aType);
-    printf("Video %d %d \n", parms->vPid, parms->vType);
-    apid = parms->aPid;
-    vpid = parms->vPid;
     if (Player_Stream_Create(handle->playerHandle, handle->sourceHandle, parms->aPid, parms->aType, &(handle->aStreamHandle)))
     {
         printf("%s Player_Source_Open failed", __FUNCTION__);
@@ -342,6 +338,14 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         Tuner_Deinit();
         return ERROR;
     }
+    else
+    {
+        printf("%s audio opened", __FUNCTION__);
+    }
+    printf("Audio %d %d \n", parms->aPid, parms->aType);
+    printf("Video %d %d \n", parms->vPid, parms->vType);
+    apid = parms->aPid;
+    vpid = parms->vPid;
     printf("%s: Player_Stream_Create\n", __FUNCTION__);
     if (initPatParsing(handle) != NO_ERROR)
     {
@@ -387,14 +391,20 @@ int32_t remoteServiceCallback(uint32_t service_number)
     int16_t type = 0;
     int16_t i = 0;
     uint8_t number;
+    if (service_number == currentServiceNumber)
+    {
+        drawTextInfo(currentServiceNumber, vpid, apid);
+        printf("%s pressed button of current service number");
+        return NO_ERROR;
+    }
     if (parsedTag == 0)
     {
         printf("%s:Pmt sections are not ready yet!!!", __FUNCTION__);
         return ERROR;
     }
+
     if (service_number > 0 && service_number < patTable->serviceInfoCount)
     {
-        // dumpPmtTable(pmtTable[service_number]);
         number = pmtTable[service_number]->streamCount;
         for (i = 0; i < number; i++)
         {
@@ -444,7 +454,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         }
         else
         {
-            printf("Video stream removed\n");
+            printf("Audio stream removed\n");
         }
         if (vtype != 0 && vpid != 0)
         {
