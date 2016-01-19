@@ -149,7 +149,7 @@ void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArra
     int kraj = section_length - 1;
     int poc = program_info_length + 3 + 9;
     int i = 0;
-    teletekst = 0;
+    *teletekst = 0;
     for (i = 0; poc < kraj; i++)
     {
         pmtServiceInfoArray[i].stream_type = (uint8_t) (*(buffer + poc));
