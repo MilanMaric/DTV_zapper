@@ -164,7 +164,7 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid)
     DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc48, &fontInterface48));
     DFBCHECK(primary->SetFont(primary, fontInterface48));
 
-    sprintf(buffer, "Channel %d\0", service_number);
+    sprintf(buffer, "Channel %d", service_number);
     fontDesc48.flags = DFDESC_HEIGHT;
     fontDesc48.height = 48;
     /* draw the text */
@@ -191,7 +191,7 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid)
     fontDesc20.flags = DFDESC_HEIGHT;
     fontDesc20.height = 20;
     /* draw the text */
-    sprintf(buffer, "Video PID %d\0", vpid);
+    sprintf(buffer, "Video PID %d", vpid);
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
                                /*red*/ 0xFF,
                                /*green*/ 0xFF,
@@ -204,7 +204,7 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid)
                                  /*x coordinate of the lower left corner of the resulting text*/ x,
                                  /*y coordinate of the lower left corner of the resulting text*/ y,
                                  /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
-    sprintf(buffer, "Audio PID %d\0", apid);
+    sprintf(buffer, "Audio PID %d", apid);
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
                                /*red*/ 0xFF,
                                /*green*/ 0xFF,
@@ -233,7 +233,7 @@ void drawVolume(int32_t volume)
     IDirectFBSurface *surface = NULL;
     int32_t surfaceHeight, surfaceWidth;
     char buffer[50];
-    sprintf(buffer, "volume_%d.png\0", volume);
+    sprintf(buffer, "volume_%d.png", volume);
     fillBlack();
     printf("%s : buffer %s\n", __FUNCTION__, buffer);
     /* create the image provider for the specified file */

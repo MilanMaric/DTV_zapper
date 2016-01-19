@@ -82,9 +82,9 @@ int32_t tunerStatusCallback(t_LockStatus status)
 int32_t pat_Demux_Section_Filter_Callback(uint8_t *buffer)
 {
 
-    printf("%s running\n", __FUNCTION__);
+    //   printf("%s running\n", __FUNCTION__);
     parsePatTable(buffer, patTable);
-    printf("%s patTable parsed\n", __FUNCTION__);
+    //    printf("%s patTable parsed\n", __FUNCTION__);
     if (patTable->patHeader->table_id == 0x00)
     {
         pthread_mutex_lock(&patMutex);
@@ -110,7 +110,7 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
 {
     static struct timespec lockStatusWaitTime;
     static struct timeval now;
-    printf("%s: started\n", __FUNCTION__);
+    //  printf("%s: started\n", __FUNCTION__);
     if (pmtTable == NULL)
     {
         pmtTable = (PmtTable**) malloc(patTable->serviceInfoCount * sizeof (PmtTable*));
@@ -118,7 +118,7 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
     }
     if (pmtTable == NULL)
         return ERROR;
-    printf("PID: %d\n", patTable->patServiceInfoArray[1].pid);
+    // printf("PID: %d\n", patTable->patServiceInfoArray[1].pid);
     if (pmtTable[indicator] == NULL)
     {
         printf("%s : ERROR pmtTable[%d] is null", __FUNCTION__, indicator);
@@ -131,7 +131,7 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
         printf("\n%s:ERROR Set filter failure!\n", __FUNCTION__);
         return ERROR;
     }
-    printf("%s : pmt set filter\n", __FUNCTION__);
+    // printf("%s : pmt set filter\n", __FUNCTION__);
 
     if (Demux_Register_Section_Filter_Callback(pmt_Demux_Section_Filter_Callback))
     {
@@ -139,7 +139,7 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
         Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
         return ERROR;
     }
-    printf("%s : pmt register section filter\n", __FUNCTION__);
+    //  printf("%s : pmt register section filter\n", __FUNCTION__);
 
     pthread_mutex_lock(&pmtMutex);
     if (ETIMEDOUT == pthread_cond_timedwait(&pmtCondition, &pmtMutex, &lockStatusWaitTime))
@@ -149,13 +149,13 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
         return ERROR;
     }
     pthread_mutex_unlock(&pmtMutex);
-    printf("%s : pmt parsed\n", __FUNCTION__);
+    // printf("%s : pmt parsed\n", __FUNCTION__);
     //  dumpPmtTable(pmtTable[indicator]);
     Demux_Unregister_Section_Filter_Callback(pmt_Demux_Section_Filter_Callback);
-    printf("%s : pmt section filter unregistered\n", __FUNCTION__);
+    // printf("%s : pmt section filter unregistered\n", __FUNCTION__);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
-    printf("%s : filter free\n", __FUNCTION__);
-    printf("%s ended", __FUNCTION__);
+    // printf("%s : filter free\n", __FUNCTION__);
+    // printf("%s ended", __FUNCTION__);
     return NO_ERROR;
 }
 
@@ -201,7 +201,6 @@ int32_t initEitParsing(DeviceHandle* handle)
     }
     pthread_mutex_unlock(&eitMutex);
     printf("%s : eit parsed\n", __FUNCTION__);
-    //  dumpPmtTable(pmtTable[indicator]);
     Demux_Unregister_Section_Filter_Callback(eit_Demux_Section_Filter_Callback);
     printf("%s : eit section filter unregistered\n", __FUNCTION__);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
@@ -215,7 +214,7 @@ int32_t initPatParsing(DeviceHandle *handle)
 
     static struct timespec lockStatusWaitTime;
     static struct timeval now;
-    printf("%s: started\n", __FUNCTION__);
+    // printf("%s: started\n", __FUNCTION__);
     //free memory if patTable is allocated
     if (patTable != NULL)
     {
@@ -226,7 +225,7 @@ int32_t initPatParsing(DeviceHandle *handle)
     // allocate memory for PAT
     patTable = (PatTable*) malloc(sizeof (PatTable));
     patTable->patHeader = (PatHeader*) malloc(sizeof (PatHeader));
-    printf("%s: PAT allocated\n", __FUNCTION__);
+    // printf("%s: PAT allocated\n", __FUNCTION__);
     // set Demux filter for pat table
     // PAT pid=0x00,table_id=0
     if (Demux_Set_Filter(handle->playerHandle, 0x00, 0, &(handle->filterHandle)) == ERROR)
@@ -235,7 +234,7 @@ int32_t initPatParsing(DeviceHandle *handle)
         return ERROR;
     }
 
-    printf("%s: Demux_Set_Filter\n", __FUNCTION__);
+    //printf("%s: Demux_Set_Filter\n", __FUNCTION__);
     gettimeofday(&now, NULL);
     lockStatusWaitTime.tv_sec = now.tv_sec + 10;
     if (Demux_Register_Section_Filter_Callback(pat_Demux_Section_Filter_Callback))
@@ -243,7 +242,7 @@ int32_t initPatParsing(DeviceHandle *handle)
         Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
         return ERROR;
     }
-    printf("%s: registered callback\n", __FUNCTION__);
+    // printf("%s: registered callback\n", __FUNCTION__);
     pthread_mutex_lock(&patMutex);
     //timed waiting for while patTable is parsing
     if (ETIMEDOUT == pthread_cond_timedwait(&patCondition, &patMutex, &lockStatusWaitTime))
@@ -253,11 +252,11 @@ int32_t initPatParsing(DeviceHandle *handle)
         return ERROR;
     }
     pthread_mutex_unlock(&patMutex);
-    printf("%s: pat parsed\n", __FUNCTION__);
+    //printf("%s: pat parsed\n", __FUNCTION__);
     Demux_Unregister_Section_Filter_Callback(pat_Demux_Section_Filter_Callback);
-    printf("%s: unregistered callback\n", __FUNCTION__);
+    // printf("%s: unregistered callback\n", __FUNCTION__);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
-    printf("%s: Demux_Free_Filter\n", __FUNCTION__);
+    // printf("%s: Demux_Free_Filter\n", __FUNCTION__);
     //  dumpPatTable(patTable);
     return NO_ERROR;
 }
@@ -275,7 +274,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         return -1;
     }
 
-    printf("%s: after Tuner_Init\n", __FUNCTION__);
+    // printf("%s: after Tuner_Init\n", __FUNCTION__);
     /* Register tuner status callback */
     gettimeofday(&now, NULL);
     lockStatusWaitTime.tv_sec = now.tv_sec + 10;
@@ -283,7 +282,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     {
         printf("\n%s : ERROR Tuner_Register_Status_Callback() fail\n", __FUNCTION__);
     }
-    printf("%s: After Tuner_Register_Status_Callback(tunerStatusCallback) %u\n", __FUNCTION__, freqHz);
+    // printf("%s: After Tuner_Register_Status_Callback(tunerStatusCallback) %u\n", __FUNCTION__, freqHz);
     /*Lock to frequency*/
     if (!Tuner_Lock_To_Frequency(freqHz, parms->bandwidth, parms->module))
     {
@@ -304,7 +303,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         return -1;
     }
     pthread_mutex_unlock(&statusMutex);
-    printf("%s: Tuner locked\n", __FUNCTION__);
+    //  printf("%s: Tuner locked\n", __FUNCTION__);
 
 
     if (Player_Init(&(handle->playerHandle)))
@@ -312,7 +311,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         Tuner_Deinit();
         return -1;
     }
-    printf("%s: Player inited\n", __FUNCTION__);
+    //printf("%s: Player inited\n", __FUNCTION__);
 
     if (Player_Source_Open(handle->playerHandle, &(handle->sourceHandle)))
     {
@@ -320,7 +319,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         Tuner_Deinit();
         return -1;
     }
-    printf("%s: Player_Source_Open\n", __FUNCTION__);
+    //printf("%s: Player_Source_Open\n", __FUNCTION__);
 
     if (Player_Stream_Create(handle->playerHandle, handle->sourceHandle, parms->vPid, parms->vType, &(handle->vStreamHandle)))
     {
@@ -346,7 +345,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     printf("Video %d %d \n", parms->vPid, parms->vType);
     apid = parms->aPid;
     vpid = parms->vPid;
-    printf("%s: Player_Stream_Create\n", __FUNCTION__);
+    //printf("%s: Player_Stream_Create\n", __FUNCTION__);
     if (initPatParsing(handle) != NO_ERROR)
     {
         return ERROR;
@@ -358,7 +357,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
         indicator = i;
         pmtTable[i] = (PmtTable*) malloc(sizeof (PmtTable));
         pmtTable[i]->pmtHeader = (PmtHeader*) malloc(sizeof (PmtHeader));
-        printf("pmt table %d\n", i);
+        //  printf("pmt table %d\n", i);
         if (initPmtParsing(handle, patTable->patServiceInfoArray[i].pid) != NO_ERROR)
         {
             deviceDeInit(handle);
@@ -394,7 +393,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
     if (service_number == currentServiceNumber)
     {
         drawTextInfo(currentServiceNumber, vpid, apid);
-        printf("%s pressed button of current service number");
+        printf("%s pressed button of current service number", __FUNCTION__);
         return NO_ERROR;
     }
     if (parsedTag == 0)
@@ -421,8 +420,8 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 atype = (type == 0x03) ? AUDIO_TYPE_DOLBY_AC3 : AUDIO_TYPE_MP3;
             }
         }
-        printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
-        printf("Atype:%d apid:%d\n", atype, apid);
+        //  printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
+        //  printf("Atype:%d apid:%d\n", atype, apid);
         drawTextInfo(service_number, vpid, apid);
         if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle))
         {
