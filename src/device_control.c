@@ -408,7 +408,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         for (i = 0; i < number; i++)
         {
             type = pmtTable[service_number]->pmtServiceInfoArray[i].stream_type;
-            printf("type: %d,", type);
+          //  printf("type: %d,", type);
             if (type == 0x01 || type == 0x02)
             {
                 vpid = pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;

@@ -52,7 +52,7 @@ int16_t settedTimer = 0;
 
 void fillBlack()
 {
-    printf("fill black\n");
+    // printf("fill black\n");
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
                                /*red*/ 0x00,
                                /*green*/ 0x00,
@@ -78,7 +78,8 @@ void initDirectFB()
     DFBCHECK(dfbInterface->CreateSurface(dfbInterface, &surfaceDesc, &primary));
     /* fetch the screen size */
     DFBCHECK(primary->GetSize(primary, &screenWidth, &screenHeight));
-
+    DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc20, &fontInterface20));
+    DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc48, &fontInterface48));
     //  fillBlack();
 }
 
@@ -91,14 +92,14 @@ void deinitDirectFB()
 
 void timerFunction()
 {
-    printf("%s started\n", __FUNCTION__);
+    //   printf("%s started\n", __FUNCTION__);
     fillBlack();
     primary->Flip(primary, NULL, 0);
     fillBlack();
     memset(&timerSpec, 0, sizeof (timerSpec));
     timer_settime(timerId, 0, &timerSpec, &timerSpecOld);
     settedTimer = 0;
-    printf("%s ended\n", __FUNCTION__);
+    //   printf("%s ended\n", __FUNCTION__);
 
 }
 
@@ -106,7 +107,7 @@ void setTimer(int32_t interval)
 {
     struct sigevent signalEvent;
 
-    printf("%s started\n", __FUNCTION__);
+    //   printf("%s started\n", __FUNCTION__);
     //brisanje strukture pre setovanja vrednosti
     memset(&timerSpec, 0, sizeof (timerSpec));
 
@@ -128,7 +129,7 @@ void setTimer(int32_t interval)
                  /*podešavanja timer-a*/ &signalEvent,
                  /*mesto gde će se smestiti ID novocreatefontg timer-a*/ &timerId);
     timer_settime(timerId, timerFlags, &timerSpec, &timerSpecOld);
-    printf("%s ended\n", __FUNCTION__);
+    //   printf("%s ended\n", __FUNCTION__);
 
 }
 
@@ -222,7 +223,7 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid)
     primary->Flip(primary,
                   /*region to be updated, NULL for the whole surface*/NULL,
                   /*flip flags*/0);
-    printf("createfont\n");
+    //  printf("createfont\n");
 
     setTimer(3);
 }
