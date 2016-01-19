@@ -498,5 +498,6 @@ uint8_t getParsedTag()
 
 int32_t remoteInfoCallback(uint32_t code)
 {
+    printf("%s \n", __FUNCTION__);
     drawTextInfo(currentServiceNumber, vpid, apid);
 }
