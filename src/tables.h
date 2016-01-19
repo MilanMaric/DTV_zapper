@@ -104,6 +104,7 @@ typedef struct _PmtTable
     PmtHeader* pmtHeader;
     PmtServiceInfo pmtServiceInfoArray[MAX_NUM_OF_PIDS];
     uint8_t streamCount;
+    uint8_t teletekst;
 } PmtTable;
 
 typedef struct _EitTable
@@ -135,7 +136,7 @@ void parsePatHeader(uint8_t *buffer, PatHeader* patHeader);
 void parsePatTable(uint8_t *buffer, PatTable* table);
 void parsePmt(uint8_t *buffer, PmtTable* table);
 void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader);
-void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[], uint8_t* broj);
+void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[], uint8_t* broj, uint8_t* teletekst);
 void dumpPatTable(PatTable* table);
 void dumpPmtTable(PmtTable* pmtTable);
 void dumpPatHeader(PatHeader* patHeader);

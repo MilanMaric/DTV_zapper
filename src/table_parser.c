@@ -125,7 +125,7 @@ void dumpPatTable(PatTable* table)
 void parsePmt(uint8_t *buffer, PmtTable* table)
 {
     parsePmtHeader(buffer, table->pmtHeader);
-    parsePmtServiceInfoArray(buffer, table->pmtServiceInfoArray, &((*table).streamCount));
+    parsePmtServiceInfoArray(buffer, table->pmtServiceInfoArray, &((*table).streamCount), &(table->teletekst));
 }
 
 void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader)
@@ -142,13 +142,14 @@ void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader)
     (*pmtHeader).program_info_length = (uint16_t) (((*(buffer + 10) << 8) + *(buffer + 11)) & 0x0FFF);
 }
 
-void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[], uint8_t* broj)
+void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[], uint8_t* broj, uint8_t* teletekst)
 {
     uint8_t section_length = (uint16_t) (((*(buffer + 1) << 8) + *(buffer + 2)) & 0x0FFF);
     uint16_t program_info_length = (uint16_t) (((*(buffer + 10) << 8) + *(buffer + 11)) & 0x0FFF);
     int kraj = section_length - 1;
     int poc = program_info_length + 3 + 9;
     int i = 0;
+    teletekst = 0;
     for (i = 0; poc < kraj; i++)
     {
         pmtServiceInfoArray[i].stream_type = (uint8_t) (*(buffer + poc));
@@ -157,6 +158,8 @@ void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArra
         poc += 2;
         pmtServiceInfoArray[i].es_info_length = (uint16_t) (((*(buffer + poc) << 8) + *(buffer + poc + 1)) & 0x0FFF);
         poc += 2;
+        *teletekst = (*(buffer + poc));
+        printf("---:: %d\n", *teletekst);
         poc += pmtServiceInfoArray[i].es_info_length;
     }
     *broj = i;
