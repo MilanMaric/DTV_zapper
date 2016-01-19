@@ -465,12 +465,17 @@ int32_t remoteServiceCallback(uint32_t service_number)
 int32_t remoteVolumeCallback(uint32_t service)
 {
     static uint8_t volume = 0;
+    uint32_t volumeTDP = 0;
     if (service == VOLUME_PLUS)
     {
         printf("Volume plus\n");
         volume++;
         volume = volume >= 10 ? 10 : volume;
         drawVolume(volume);
+        Player_Volume_Get(globHandle->aStreamHandle, &volumeTDP);
+        printf("\tTDP volume: %d\n", volumeTDP);
+        volumeTDP++;
+        Player_Volume_Set(globHandle->aStreamHandle, volumeTDP);
     }
 
     if (service == VOLUME_MINUS)
@@ -478,7 +483,12 @@ int32_t remoteVolumeCallback(uint32_t service)
         printf("Volume minus\n");
         if (volume != 0)
             volume--;
+        Player_Volume_Get(globHandle->aStreamHandle, &volumeTDP);
+        printf("\tTDP volume: %d\n", volumeTDP);
+        volumeTDP--;
+        Player_Volume_Set(globHandle->aStreamHandle, volumeTDP);
         drawVolume(volume);
+
     }
 }
 
