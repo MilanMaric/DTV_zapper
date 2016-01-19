@@ -422,8 +422,8 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 atype = (type == 0x03) ? AUDIO_TYPE_DOLBY_AC3 : AUDIO_TYPE_MP3;
             }
         }
-        //  printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
-        //  printf("Atype:%d apid:%d\n", atype, apid);
+        printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
+        printf("Atype:%d apid:%d\n", atype, apid);
         drawTextInfo(service_number, vpid, apid);
         if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle))
         {
@@ -455,6 +455,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 printf("Player stream not created\n");
             }
         }
+        printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
     }
     else
     {
