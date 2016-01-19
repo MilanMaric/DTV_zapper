@@ -72,12 +72,16 @@ void fillBlack()
                                /*red*/ 0x00,
                                /*green*/ 0x00,
                                /*blue*/ 0xff,
-                               /*alpha*/ 0x00));
+                               /*alpha*/ 0x80));
     primary->FillRectangle(/*surface to draw on*/ primary,
                            /*upper left x coordinate*/ 0,
                            /*upper left y coordinate*/ 0,
                            /*rectangle width*/ screenWidth,
                            /*rectangle height*/ screenHeight);
+    primary->Flip(primary,
+                  /*region to be updated, NULL for the whole surface*/NULL,
+                  /*flip flags*/0);
+
 }
 
 void initDirectFB()
