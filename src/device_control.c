@@ -449,14 +449,14 @@ int32_t remoteServiceCallback(uint32_t service_number)
 
         if (atype != 0 && apid != 0)
         {
-            printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
+          //  printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, apid, atype, &(globHandle->aStreamHandle)))
             {
                 printf("Player stream not created\n");
             }
         }
         drawTextInfo(service_number, vpid, apid);
-        printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
+       // printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
     }
     else
     {
@@ -472,7 +472,6 @@ int32_t remoteVolumeCallback(uint32_t service)
     printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
     if (service == VOLUME_PLUS)
     {
-        printf("Volume plus\n");
         volume++;
         volume = volume >= 10 ? 10 : volume;
         drawVolume(volume);
@@ -484,7 +483,6 @@ int32_t remoteVolumeCallback(uint32_t service)
 
     if (service == VOLUME_MINUS)
     {
-        printf("Volume minus\n");
         if (volume != 0)
             volume--;
         Player_Volume_Get(globHandle->aStreamHandle, &volumeTDP);
@@ -492,7 +490,6 @@ int32_t remoteVolumeCallback(uint32_t service)
         volumeTDP--;
         Player_Volume_Set(globHandle->aStreamHandle, volumeTDP);
         drawVolume(volume);
-
     }
 }
 
@@ -503,6 +500,5 @@ uint8_t getParsedTag()
 
 int32_t remoteInfoCallback(uint32_t code)
 {
-    printf("%s \n", __FUNCTION__);
     drawTextInfo(currentServiceNumber, vpid, apid);
 }

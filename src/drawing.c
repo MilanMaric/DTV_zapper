@@ -71,7 +71,7 @@ void fillBlack()
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
                                /*red*/ 0x00,
                                /*green*/ 0x00,
-                               /*blue*/ 0x00,
+                               /*blue*/ 0xff,
                                /*alpha*/ 0xff));
     primary->FillRectangle(/*surface to draw on*/ primary,
                            /*upper left x coordinate*/ 0,
