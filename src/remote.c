@@ -67,14 +67,14 @@ void registerServiceNumberRemoteCallBack(Remote_Control_Callback remote_Controll
     sectionNumberCallback = remote_ControllCallback;
 }
 
-void registerVolumeRemoteCallback(Remote_Control_Callback remoteControllCallback)
+void registerVolumeRemoteCallback(Remote_Control_Callback remote_ControllCallback)
 {
-    volumeCallback = remoteControllCallback;
+    volumeCallback = remote_ControllCallback;
 }
 
-void registerInfoButtonCallback(Remote_Control_Callback remoteControllCallback)
+void registerInfoButtonCallback(Remote_Control_Callback remote_ControllCallback)
 {
-    volumeCallback = remoteControllCallback;
+    infoCallback = remote_ControllCallback;
 }
 
 void* remoteControlThread(void* nn)
@@ -127,15 +127,23 @@ void* remoteControlThread(void* nn)
                     break;
                 case REMOTE_BTN_VOLUME_PLUS:
                     if (volumeCallback != NULL)
+                    {
+                        printf("****VOLUME\n");
                         volumeCallback(VOLUME_PLUS);
+                    }
                     break;
                 case REMOTE_BTN_VOLUME_MINUS:
                     if (volumeCallback != NULL)
+                    {
+                        printf("****VOLUME\n");
                         volumeCallback(VOLUME_MINUS);
+                    }
                     break;
                 case REMOTE_BTN_INFO:
                     if (infoCallback != NULL)
+                    {
                         infoCallback(1);
+                    }
                     break;
                 case REMOTE_BTN_EXIT:
                     free(eventBuf);
@@ -145,7 +153,7 @@ void* remoteControlThread(void* nn)
                     if (tmp_number != -1)
                     {
                         service_number = tmp_number;
-                        printf("Service number: %d tmp_number\n", service_number);
+                        printf("****Service number: %d tmp_number\n", service_number);
                         sectionNumberCallback(service_number);
                     }
                 }
