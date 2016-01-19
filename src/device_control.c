@@ -449,18 +449,19 @@ int32_t remoteServiceCallback(uint32_t service_number)
 
         if (atype != 0 && apid != 0)
         {
-          //  printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
+            //  printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, apid, atype, &(globHandle->aStreamHandle)))
             {
                 printf("Player stream not created\n");
             }
         }
         drawTextInfo(service_number, vpid, apid);
-       // printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
+        // printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
     }
     else
     {
         printf("No!\n");
+        return ERROR;
     }
     return NO_ERROR;
 }
