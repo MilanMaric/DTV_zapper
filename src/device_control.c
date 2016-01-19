@@ -449,11 +449,14 @@ int32_t remoteServiceCallback(uint32_t service_number)
 
         if (atype != 0 && apid != 0)
         {
+            printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, apid, atype, &(globHandle->aStreamHandle)))
             {
                 printf("Player stream not created\n");
-            }else{
-                
+            }
+            else
+            {
+                printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
             }
         }
     }
@@ -468,6 +471,7 @@ int32_t remoteVolumeCallback(uint32_t service)
 {
     static uint8_t volume = 0;
     uint32_t volumeTDP = 0;
+    printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
     if (service == VOLUME_PLUS)
     {
         printf("Volume plus\n");
