@@ -1,3 +1,24 @@
+/****************************************************************************
+ *
+ * Univerzitet u Banjoj Luci, Elektrotehnicki fakultet
+ *
+ * -----------------------------------------------------
+ * Ispitni zadatak iz predmeta:
+ *
+ * MULTIMEDIJALNI SISTEMI
+ * -----------------------------------------------------
+ * Naslov zadatka (npr. DVB Sniffer za EIT/SDT)
+ * -----------------------------------------------------
+ *
+ * \file table_parser.c
+ * \brief
+ * Ovaj modul realizuje parsiranje PMT,PAT i EIT tabela, uz postojanje fukcija za
+ * ispis sadrzaja na standardni izlaz.
+ * 
+ * @Author Petar Petrovic
+ * \notes
+ *
+ *****************************************************************************/
 /*
  The MIT License (MIT)
 
@@ -31,7 +52,8 @@ SOFTWARE.
 
 #define NON_STOP    1
 
-typedef enum remoteButton_Code {
+typedef enum remoteButton_Code
+{
     REMOTE_BTN_NUM_1 = 2,
     REMOTE_BTN_NUM_2 = 3,
     REMOTE_BTN_NUM_3 = 4,
@@ -53,7 +75,8 @@ typedef enum remoteButton_Code {
     REMOTE_BTN_EXIT = 102
 } remoteButtonCode;
 
-typedef enum {
+typedef enum
+{
     VOLUME_PLUS = 1,
     VOLUME_MINUS
 } RemoteVolumeCode;

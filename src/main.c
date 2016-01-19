@@ -1,3 +1,24 @@
+/****************************************************************************
+ *
+ * Univerzitet u Banjoj Luci, Elektrotehnicki fakultet
+ *
+ * -----------------------------------------------------
+ * Ispitni zadatak iz predmeta:
+ *
+ * MULTIMEDIJALNI SISTEMI
+ * -----------------------------------------------------
+ * Naslov zadatka (npr. DVB Sniffer za EIT/SDT)
+ * -----------------------------------------------------
+ *
+ * \file table_parser.c
+ * \brief
+ * Ovaj modul realizuje parsiranje PMT,PAT i EIT tabela, uz postojanje fukcija za
+ * ispis sadrzaja na standardni izlaz.
+ * 
+ * @Author Petar Petrovic
+ * \notes
+ *
+ *****************************************************************************/
 /*
  The MIT License (MIT)
 

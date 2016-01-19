@@ -18,8 +18,6 @@
  * @Author Petar Petrovic
  * \notes
  *
- * \history
- * 11.05.2009. Ispravljena greska pri parsiranju EIT zaglavlja.
  *****************************************************************************/
 /*
  The MIT License (MIT)
@@ -54,20 +52,6 @@ SOFTWARE.
 #include <stdint.h>
 #include <string.h>
 
-/****************************************************************************
- *
- * @brief
- Ova funkcija implementira parsiranje niza PAT servisnih informacija
- *
- * @param
-buffer - [in] Ulazni bafer sekcija
-patServiceInfoArray - [out] Izlazni niz servisnih informacija 
- *                  (mora biti alociran memorijski prostor sa smjestanje niza) 
- * 
-section_length - [in] polje section_length iz odgovarajuce PAT tabele
- * , tako da se moze proracunati broj servisnih informacija
- *
- *****************************************************************************/
 void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArray[], uint16_t section_length)
 {
     int brojPidova = (section_length - 10) / 4;

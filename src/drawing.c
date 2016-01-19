@@ -50,22 +50,24 @@ DFBFontDescription fontDesc20;
 
 int16_t settedTimer = 0;
 
-void fillBlack() {
+void fillBlack()
+{
     printf("fill black\n");
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
-            /*red*/ 0x00,
-            /*green*/ 0x00,
-            /*blue*/ 0x00,
-            /*alpha*/ 0x00));
+                               /*red*/ 0x00,
+                               /*green*/ 0x00,
+                               /*blue*/ 0x00,
+                               /*alpha*/ 0x00));
     primary->FillRectangle(/*surface to draw on*/ primary,
-            /*upper left x coordinate*/ 0,
-            /*upper left y coordinate*/ 0,
-            /*rectangle width*/ screenWidth,
-            /*rectangle height*/ screenHeight);
+                           /*upper left x coordinate*/ 0,
+                           /*upper left y coordinate*/ 0,
+                           /*rectangle width*/ screenWidth,
+                           /*rectangle height*/ screenHeight);
 
 }
 
-void initDirectFB() {
+void initDirectFB()
+{
     /* fetch the DirectFB interface */
     DFBCHECK(DirectFBCreate(&dfbInterface));
     /* tell the DirectFB to take the full screen for this application */
@@ -80,13 +82,15 @@ void initDirectFB() {
     //  fillBlack();
 }
 
-void deinitDirectFB() {
+void deinitDirectFB()
+{
     primary->Release(primary);
     dfbInterface->Release(dfbInterface);
     timer_delete(timerId);
 }
 
-void timerFunction() {
+void timerFunction()
+{
     printf("%s started\n", __FUNCTION__);
     fillBlack();
     primary->Flip(primary, NULL, 0);
@@ -98,7 +102,8 @@ void timerFunction() {
 
 }
 
-void setTimer(int32_t interval) {
+void setTimer(int32_t interval)
+{
     struct sigevent signalEvent;
 
     printf("%s started\n", __FUNCTION__);
@@ -120,14 +125,15 @@ void setTimer(int32_t interval) {
         timer_delete(timerId);
     settedTimer = 1;
     timer_create(/*sistemski sat za merenje vremena*/ CLOCK_REALTIME,
-            /*podešavanja timer-a*/ &signalEvent,
-            /*mesto gde će se smestiti ID novocreatefontg timer-a*/ &timerId);
+                 /*podešavanja timer-a*/ &signalEvent,
+                 /*mesto gde će se smestiti ID novocreatefontg timer-a*/ &timerId);
     timer_settime(timerId, timerFlags, &timerSpec, &timerSpecOld);
     printf("%s ended\n", __FUNCTION__);
 
 }
 
-void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid) {
+void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid)
+{
     char buffer[50];
     int x;
     int y;
@@ -141,15 +147,15 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid) {
     y = 5 * screenHeight / 8;
 
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
-            /*red*/ 0x00,
-            /*green*/ 0xFF,
-            /*blue*/ 0x00,
-            /*alpha*/ 0x88));
+                               /*red*/ 0x00,
+                               /*green*/ 0xFF,
+                               /*blue*/ 0x00,
+                               /*alpha*/ 0x88));
     primary->FillRectangle(/*surface to draw on*/ primary,
-            /*upper left x coordinate*/ x,
-            /*upper left y coordinate*/ y,
-            /*rectangle width*/ 2 * screenWidth / 4,
-            /*rectangle height*/ 2 * screenHeight / 8);
+                           /*upper left x coordinate*/ x,
+                           /*upper left y coordinate*/ y,
+                           /*rectangle width*/ 2 * screenWidth / 4,
+                           /*rectangle height*/ 2 * screenHeight / 8);
     /* create the font and set the created font for primary surface text drawing */
 
 
@@ -163,18 +169,18 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid) {
     fontDesc48.height = 48;
     /* draw the text */
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
-            /*red*/ 0xFF,
-            /*green*/ 0xFF,
-            /*blue*/ 0xFF,
-            /*alpha*/ 0x00));
+                               /*red*/ 0xFF,
+                               /*green*/ 0xFF,
+                               /*blue*/ 0xFF,
+                               /*alpha*/ 0x00));
     x = x + 58;
     y = y + 58;
     DFBCHECK(primary->DrawString(primary,
-            /*text to be drawn*/ buffer,
-            /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
-            /*x coordinate of the lower left corner of the resulting text*/ x,
-            /*y coordinate of the lower left corner of the resulting text*/ y,
-            /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
+                                 /*text to be drawn*/ buffer,
+                                 /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
+                                 /*x coordinate of the lower left corner of the resulting text*/ x,
+                                 /*y coordinate of the lower left corner of the resulting text*/ y,
+                                 /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
 
     fontInterface48->Release(fontInterface48);
 
@@ -187,41 +193,42 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid) {
     /* draw the text */
     sprintf(buffer, "Video PID %d\0", vpid);
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
-            /*red*/ 0xFF,
-            /*green*/ 0xFF,
-            /*blue*/ 0xFF,
-            /*alpha*/ 0x00));
+                               /*red*/ 0xFF,
+                               /*green*/ 0xFF,
+                               /*blue*/ 0xFF,
+                               /*alpha*/ 0x00));
     y = y + 58;
     DFBCHECK(primary->DrawString(primary,
-            /*text to be drawn*/ buffer,
-            /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
-            /*x coordinate of the lower left corner of the resulting text*/ x,
-            /*y coordinate of the lower left corner of the resulting text*/ y,
-            /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
+                                 /*text to be drawn*/ buffer,
+                                 /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
+                                 /*x coordinate of the lower left corner of the resulting text*/ x,
+                                 /*y coordinate of the lower left corner of the resulting text*/ y,
+                                 /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
     sprintf(buffer, "Audio PID %d\0", apid);
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
-            /*red*/ 0xFF,
-            /*green*/ 0xFF,
-            /*blue*/ 0xFF,
-            /*alpha*/ 0x00));
+                               /*red*/ 0xFF,
+                               /*green*/ 0xFF,
+                               /*blue*/ 0xFF,
+                               /*alpha*/ 0x00));
     y = y + 20;
     DFBCHECK(primary->DrawString(primary,
-            /*text to be drawn*/ buffer,
-            /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
-            /*x coordinate of the lower left corner of the resulting text*/ x,
-            /*y coordinate of the lower left corner of the resulting text*/ y,
-            /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
+                                 /*text to be drawn*/ buffer,
+                                 /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
+                                 /*x coordinate of the lower left corner of the resulting text*/ x,
+                                 /*y coordinate of the lower left corner of the resulting text*/ y,
+                                 /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
     fontInterface20->Release(fontInterface20);
 
     primary->Flip(primary,
-            /*region to be updated, NULL for the whole surface*/NULL,
-            /*flip flags*/0);
+                  /*region to be updated, NULL for the whole surface*/NULL,
+                  /*flip flags*/0);
     printf("createfont\n");
 
     setTimer(3);
 }
 
-void drawVolume(int32_t volume) {
+void drawVolume(int32_t volume)
+{
     IDirectFBImageProvider *provider;
     IDirectFBSurface *surface = NULL;
     int32_t surfaceHeight, surfaceWidth;
@@ -244,10 +251,10 @@ void drawVolume(int32_t volume) {
     /* fetch the logo size and add (blit) it to the screen */
     DFBCHECK(surface->GetSize(surface, &surfaceWidth, &surfaceHeight));
     DFBCHECK(primary->Blit(primary,
-            /*source surface*/ surface,
-            /*source region, NULL to blit the whole surface*/ NULL,
-            /*destination x coordinate of the upper left corner of the image*/50,
-            /*destination y coordinate of the upper left corner of the image*/screenHeight - surfaceHeight - 50));
+                           /*source surface*/ surface,
+                           /*source region, NULL to blit the whole surface*/ NULL,
+                           /*destination x coordinate of the upper left corner of the image*/50,
+                           /*destination y coordinate of the upper left corner of the image*/screenHeight - surfaceHeight - 50));
     primary->Flip(primary, NULL, 0);
     setTimer(3);
 }
