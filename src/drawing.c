@@ -72,7 +72,7 @@ void fillBlack()
                                /*red*/ 0x00,
                                /*green*/ 0x00,
                                /*blue*/ 0xff,
-                               /*alpha*/ 0xff));
+                               /*alpha*/ 0x00));
     primary->FillRectangle(/*surface to draw on*/ primary,
                            /*upper left x coordinate*/ 0,
                            /*upper left y coordinate*/ 0,
