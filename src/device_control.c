@@ -475,10 +475,10 @@ int32_t remoteVolumeCallback(uint32_t service)
         volume++;
         volume = volume >= 10 ? 10 : volume;
         drawVolume(volume);
-        Player_Volume_Get(globHandle->aStreamHandle, &volumeTDP);
+        Player_Volume_Get(globHandle->vStreamHandle, &volumeTDP);
         printf("\tTDP volume: %d\n", volumeTDP);
         volumeTDP++;
-        Player_Volume_Set(globHandle->aStreamHandle, volumeTDP);
+        Player_Volume_Set(globHandle->vStreamHandle, volumeTDP);
     }
 
     if (service == VOLUME_MINUS)

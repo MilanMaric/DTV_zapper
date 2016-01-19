@@ -91,9 +91,6 @@ void fillBlack()
                            /*upper left y coordinate*/ 0,
                            /*rectangle width*/ screenWidth,
                            /*rectangle height*/ screenHeight);
-    primary->Flip(primary,
-                  /*region to be updated, NULL for the whole surface*/NULL,
-                  /*flip flags*/0);
 
 }
 
