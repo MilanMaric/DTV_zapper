@@ -93,7 +93,7 @@ int32_t main(int32_t argc, char** argv)
     pthread_create(&remote_thread, NULL, &remoteControlThread, NULL);
 
     pthread_join(remote_thread, NULL);
-
+    fillBlack();
 
     deviceDeInit(&handle);
     deinitDirectFB();

@@ -50,7 +50,7 @@ DFBFontDescription fontDesc20;
 
 int16_t settedTimer = 0;
 
-void fillBlack()
+void fillTransparent()
 {
     // printf("fill black\n");
     DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
@@ -64,6 +64,20 @@ void fillBlack()
                            /*rectangle width*/ screenWidth,
                            /*rectangle height*/ screenHeight);
 
+}
+
+void fillBlack()
+{
+    DFBCHECK(primary->SetColor(/*surface to draw on*/ primary,
+                               /*red*/ 0x00,
+                               /*green*/ 0x00,
+                               /*blue*/ 0x00,
+                               /*alpha*/ 0xff));
+    primary->FillRectangle(/*surface to draw on*/ primary,
+                           /*upper left x coordinate*/ 0,
+                           /*upper left y coordinate*/ 0,
+                           /*rectangle width*/ screenWidth,
+                           /*rectangle height*/ screenHeight);
 }
 
 void initDirectFB()
@@ -93,9 +107,9 @@ void deinitDirectFB()
 void timerFunction()
 {
     //   printf("%s started\n", __FUNCTION__);
-    fillBlack();
+    fillTransparent();
     primary->Flip(primary, NULL, 0);
-    fillBlack();
+    fillTransparent();
     memset(&timerSpec, 0, sizeof (timerSpec));
     timer_settime(timerId, 0, &timerSpec, &timerSpecOld);
     settedTimer = 0;
@@ -143,7 +157,7 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid)
 
     /* rectangle drawing */
 
-    fillBlack();
+    fillTransparent();
     x = 1 * screenWidth / 4;
     y = 5 * screenHeight / 8;
 
@@ -235,7 +249,7 @@ void drawVolume(int32_t volume)
     int32_t surfaceHeight, surfaceWidth;
     char buffer[50];
     sprintf(buffer, "volume_%d.png", volume);
-    fillBlack();
+    fillTransparent();
     printf("%s : buffer %s\n", __FUNCTION__, buffer);
     /* create the image provider for the specified file */
     DFBCHECK(dfbInterface->CreateImageProvider(dfbInterface, buffer, &provider));

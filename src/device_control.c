@@ -424,7 +424,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         }
         printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
         printf("Atype:%d apid:%d\n", atype, apid);
-        drawTextInfo(service_number, vpid, apid);
+
         if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle))
         {
             printf("Stream not removed\n");
@@ -435,11 +435,11 @@ int32_t remoteServiceCallback(uint32_t service_number)
             {
                 printf("Player stream not created\n");
             }
-
         }
         else
         {
             printf("This service doesent contain video\n");
+            fillBlack();
         }
 
         if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->aStreamHandle))
@@ -455,6 +455,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 printf("Player stream not created\n");
             }
         }
+        drawTextInfo(service_number, vpid, apid);
         printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
     }
     else
