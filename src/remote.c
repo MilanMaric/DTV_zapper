@@ -121,21 +121,25 @@ void* remoteControlThread(void* nn)
                 {
                 case REMOTE_BTN_PROGRAM_PLUS:
                     service_number++;
+                    if(sectionNumberCallback(service_number)==ERROR)
+                        service_number--;
                     break;
                 case REMOTE_BTN_PROGRAM_MINUS:
-                    if (service_number != 0) service_number--;
+                    if (service_number != 0) {
+                        service_number--;
+                        if(sectionNumberCallback(service_number)==ERROR)
+                            service_number++;
+                    }
                     break;
                 case REMOTE_BTN_VOLUME_PLUS:
                     if (volumeCallback != NULL)
                     {
-                        printf("****VOLUME\n");
                         volumeCallback(VOLUME_PLUS);
                     }
                     break;
                 case REMOTE_BTN_VOLUME_MINUS:
                     if (volumeCallback != NULL)
                     {
-                        printf("****VOLUME\n");
                         volumeCallback(VOLUME_MINUS);
                     }
                     break;

@@ -452,6 +452,8 @@ int32_t remoteServiceCallback(uint32_t service_number)
             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, apid, atype, &(globHandle->aStreamHandle)))
             {
                 printf("Player stream not created\n");
+            }else{
+                
             }
         }
     }
