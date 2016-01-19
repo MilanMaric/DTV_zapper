@@ -158,8 +158,11 @@ void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArra
         poc += 2;
         pmtServiceInfoArray[i].es_info_length = (uint16_t) (((*(buffer + poc) << 8) + *(buffer + poc + 1)) & 0x0FFF);
         poc += 2;
-        *teletekst = (*(buffer + poc));
-        printf("---:: %d\n", *teletekst);
+        if (pmtServiceInfoArray[i].es_info_length > 0)
+        {
+            *teletekst = (*(buffer + poc));
+            printf("---:: %d\n", *teletekst);
+        }
         poc += pmtServiceInfoArray[i].es_info_length;
     }
     *broj = i;
