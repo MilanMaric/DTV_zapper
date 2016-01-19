@@ -383,7 +383,7 @@ void deviceDeInit(DeviceHandle *handle)
 
 int32_t remoteServiceCallback(uint32_t service_number)
 {
-    
+
     int16_t type = 0;
     int16_t i = 0;
     uint8_t number;
@@ -449,7 +449,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
 
         if (atype != 0 && apid != 0)
         {
-            if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->aStreamHandle)))
+            if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, apid, atype, &(globHandle->aStreamHandle)))
             {
                 printf("Player stream not created\n");
             }
