@@ -396,6 +396,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         printf("%s pressed button of current service number", __FUNCTION__);
         return NO_ERROR;
     }
+    currentServiceNumber = service_number;
     if (parsedTag == 0)
     {
         printf("%s:Pmt sections are not ready yet!!!", __FUNCTION__);
@@ -408,7 +409,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         for (i = 0; i < number; i++)
         {
             type = pmtTable[service_number]->pmtServiceInfoArray[i].stream_type;
-          //  printf("type: %d,", type);
+            //  printf("type: %d,", type);
             if (type == 0x01 || type == 0x02)
             {
                 vpid = pmtTable[service_number]->pmtServiceInfoArray[i].el_pid;
