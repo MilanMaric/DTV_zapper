@@ -149,13 +149,10 @@ void* remoteControlThread(void* nn)
                         sectionNumberCallback(service_number);
                     }
                 }
-                
             }
         }
 
     }
-}
-free(eventBuf);
 }
 
 int32_t remoteCheckServiceNumberCode(int32_t code)
