@@ -148,7 +148,7 @@ void* remoteControlThread(void* nn)
                     printf(" MUTE\n");
                     if (volumeCallback != NULL)
                     {
-                        volumeCallback(REMOTE_BTN_MUTE);
+                        volumeCallback(VOLUME_MUTE);
                     }
                     break;
                 case REMOTE_BTN_INFO:

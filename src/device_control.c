@@ -506,7 +506,7 @@ int32_t remoteVolumeCallback(uint32_t service)
     }
     if (service == VOLUME_MUTE)
     {
-        if (swap)
+        if (swap==0)
         {
             drawVolume(0);
             swap = 1;
@@ -514,6 +514,7 @@ int32_t remoteVolumeCallback(uint32_t service)
         else
         {
             drawVolume(volume);
+swap=0;
         }
     }
 }
