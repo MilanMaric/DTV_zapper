@@ -72,13 +72,15 @@ typedef enum remoteButton_Code
     REMOTE_BTN_PROGRAM_PLUS = 62,
     REMOTE_BTN_PROGRAM_MINUS = 61,
     REMOTE_BTN_INFO = 358,
-    REMOTE_BTN_EXIT = 102
+    REMOTE_BTN_EXIT = 102,
+    REMOTE_BTN_MUTE = 60
 } remoteButtonCode;
 
 typedef enum
 {
     VOLUME_PLUS = 1,
     VOLUME_MINUS
+    VOLUME_MUTE
 } RemoteVolumeCode;
 
 typedef int32_t(*Remote_Control_Callback)(uint32_t code);

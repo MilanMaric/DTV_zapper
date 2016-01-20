@@ -77,6 +77,7 @@ void registerInfoButtonCallback(Remote_Control_Callback remote_ControllCallback)
     infoCallback = remote_ControllCallback;
 }
 
+
 void* remoteControlThread(void* nn)
 {
     const char* dev = "/dev/input/event0";
@@ -121,13 +122,14 @@ void* remoteControlThread(void* nn)
                 {
                 case REMOTE_BTN_PROGRAM_PLUS:
                     service_number++;
-                    if(sectionNumberCallback(service_number)==ERROR)
+                    if (sectionNumberCallback(service_number) == ERROR)
                         service_number--;
                     break;
                 case REMOTE_BTN_PROGRAM_MINUS:
-                    if (service_number != 0) {
+                    if (service_number != 0)
+                    {
                         service_number--;
-                        if(sectionNumberCallback(service_number)==ERROR)
+                        if (sectionNumberCallback(service_number) == ERROR)
                             service_number++;
                     }
                     break;
@@ -141,6 +143,12 @@ void* remoteControlThread(void* nn)
                     if (volumeCallback != NULL)
                     {
                         volumeCallback(VOLUME_MINUS);
+                    }
+                    break;
+                case REMOTE_BTN_MUTE:
+                    if (volumeCallback != NULL)
+                    {
+                        volumeCallback(REMOTE_BTN_MUTE);
                     }
                     break;
                 case REMOTE_BTN_INFO:
@@ -157,7 +165,7 @@ void* remoteControlThread(void* nn)
                     if (tmp_number != -1)
                     {
                         service_number = tmp_number;
-                        printf("****Service number: %d tmp_number\n", service_number);
+                        //  printf("****Service number: %d tmp_number\n", service_number);
                         sectionNumberCallback(service_number);
                     }
                 }

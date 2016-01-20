@@ -70,11 +70,11 @@ int32_t tunerStatusCallback(t_LockStatus status)
         pthread_mutex_lock(&statusMutex);
         pthread_cond_signal(&statusCondition);
         pthread_mutex_unlock(&statusMutex);
-        printf("\n%s -----TUNER LOCKED-----\n", __FUNCTION__);
+        // printf("\n%s -----TUNER LOCKED-----\n", __FUNCTION__);
     }
     else
     {
-        printf("\n%s -----TUNER NOT LOCKED-----\n", __FUNCTION__);
+        //   printf("\n%s -----TUNER NOT LOCKED-----\n", __FUNCTION__);
     }
     return NO_ERROR;
 }
@@ -114,7 +114,7 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
     if (pmtTable == NULL)
     {
         pmtTable = (PmtTable**) malloc(patTable->serviceInfoCount * sizeof (PmtTable*));
-        printf("%s : pmt allocated\n", __FUNCTION__);
+        //   printf("%s : pmt allocated\n", __FUNCTION__);
     }
     if (pmtTable == NULL)
         return ERROR;
@@ -182,7 +182,7 @@ int32_t initEitParsing(DeviceHandle* handle)
         printf("\n%s:ERROR Set filter failure!\n", __FUNCTION__);
         return ERROR;
     }
-    printf("%s : eit set filter\n", __FUNCTION__);
+    //printf("%s : eit set filter\n", __FUNCTION__);
 
     if (Demux_Register_Section_Filter_Callback(eit_Demux_Section_Filter_Callback))
     {
@@ -190,7 +190,7 @@ int32_t initEitParsing(DeviceHandle* handle)
         Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
         return ERROR;
     }
-    printf("%s : eit register section filter\n", __FUNCTION__);
+    // printf("%s : eit register section filter\n", __FUNCTION__);
 
     pthread_mutex_lock(&pmtMutex);
     if (ETIMEDOUT == pthread_cond_timedwait(&eitCondition, &eitMutex, &lockStatusWaitTime))
@@ -200,12 +200,12 @@ int32_t initEitParsing(DeviceHandle* handle)
         return ERROR;
     }
     pthread_mutex_unlock(&eitMutex);
-    printf("%s : eit parsed\n", __FUNCTION__);
+    // printf("%s : eit parsed\n", __FUNCTION__);
     Demux_Unregister_Section_Filter_Callback(eit_Demux_Section_Filter_Callback);
-    printf("%s : eit section filter unregistered\n", __FUNCTION__);
+    //printf("%s : eit section filter unregistered\n", __FUNCTION__);
     Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
-    printf("%s : filter free\n", __FUNCTION__);
-    printf("%s ended", __FUNCTION__);
+    // printf("%s : filter free\n", __FUNCTION__);
+    // printf("%s ended", __FUNCTION__);
     return NO_ERROR;
 }
 
@@ -393,7 +393,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         if (service_number <= patTable->serviceInfoCount)
         {
             drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
-            printf("%s pressed button of current service number", __FUNCTION__);
+            //  printf("%s pressed button of current service number", __FUNCTION__);
             return NO_ERROR;
         }
         else
@@ -459,7 +459,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
             //  printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, apid, atype, &(globHandle->aStreamHandle)))
             {
-                printf("Player stream not created\n");
+                printf("\n:::::::::::::::--------------------Audio stream not created::::::::::::::::::::::\n");
             }
         }
         printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
@@ -478,6 +478,7 @@ int32_t remoteVolumeCallback(uint32_t service)
 {
     static uint8_t volume = 0;
     uint32_t volumeTDP = 0;
+    static uint8_t swap = 0;
     //    printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
     if (service == VOLUME_PLUS)
     {
@@ -500,6 +501,19 @@ int32_t remoteVolumeCallback(uint32_t service)
         Player_Volume_Set(globHandle->aStreamHandle, volumeTDP);
         drawVolume(volume);
     }
+    if (service == VOLUME_MUTE)
+    {
+        if (swap)
+        {
+            drawVolume(0);
+            swap = 1;
+        }
+        else
+        {
+            drawVolume(volume);
+            f
+        }
+    }
 }
 
 uint8_t getParsedTag()
@@ -509,6 +523,6 @@ uint8_t getParsedTag()
 
 int32_t remoteInfoCallback(uint32_t code)
 {
-    printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
+    //   printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
     drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
 }

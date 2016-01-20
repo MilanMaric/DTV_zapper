@@ -77,7 +77,7 @@ int32_t main(int32_t argc, char** argv)
             return ERROR;
         }
     }
-    dumpConfig(&parms);
+ //   dumpConfig(&parms);
     pthread_t remote_thread;
     if (deviceInit(&parms, &handle) == ERROR)
     {
