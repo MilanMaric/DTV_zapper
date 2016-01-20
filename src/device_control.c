@@ -509,5 +509,6 @@ uint8_t getParsedTag()
 
 int32_t remoteInfoCallback(uint32_t code)
 {
-    drawTextInfo(currentServiceNumber, vpid, apid, 0);
+    printf("%s: %d %s teletekst", __FUNCTION__, service_number, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
+    drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
 }
