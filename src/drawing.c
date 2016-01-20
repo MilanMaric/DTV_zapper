@@ -106,10 +106,10 @@ void initDirectFB()
     DFBCHECK(dfbInterface->CreateSurface(dfbInterface, &surfaceDesc, &primary));
     /* fetch the screen size */
     DFBCHECK(primary->GetSize(primary, &screenWidth, &screenHeight));
-    DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc20, &fontInterface20));
-    DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc48, &fontInterface48));
-    fontInterface20->Release(fontInterface20);
-    fontInterface48->Release(fontInterface48);
+    /* DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc20, &fontInterface20));
+     DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc48, &fontInterface48));
+     fontInterface20->Release(fontInterface20);
+     fontInterface48->Release(fontInterface48);*/
     //  fillBlack();
 }
 
@@ -175,7 +175,7 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid, uint8_t 
     DFBCHECK(primary->DrawString(primary, buffer, -1, x, y, DSTF_LEFT));
     if (tel)
     {
-        DFBCHECK(primary->DrawString(primary, teletekst, -1, 2 * screenWidth / 4 +x-50, y, DSTF_LEFT));
+        DFBCHECK(primary->DrawString(primary, teletekst, -1, 2 * screenWidth / 4 + x - 150, y, DSTF_LEFT));
         fontInterface48->Release(fontInterface48);
     }
 
