@@ -346,7 +346,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     apid = parms->aPid;
     vpid = parms->vPid;
     //printf("%s: Player_Stream_Create\n", __FUNCTION__);
-    drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
+    drawTextInfo(1, vpid, apid, 1);
     if (initPatParsing(handle) != NO_ERROR)
     {
         return ERROR;
@@ -436,8 +436,8 @@ int32_t remoteServiceCallback(uint32_t service_number)
         {
             printf("Stream not removed\n");
         }
-        
-        
+
+
         if (vtype != 0 && vpid != 0)
         {
             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->vStreamHandle)))
@@ -463,9 +463,9 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 printf("\n:::::::::::::::--------------------Audio stream not created::::::::::::::::::::::\n");
             }
         }
-      //  printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
+        //  printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
         drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
-        
+
         // printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
     }
     else
