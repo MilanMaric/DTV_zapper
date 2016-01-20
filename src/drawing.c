@@ -177,7 +177,7 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid, uint8_t 
     }
     x = 1 * screenWidth / 4;
     y = 5 * screenHeight / 8;
-    DFBCHECK(primary->SetColor(primary, 0x00, 0xFF, 0x00, 0x88));
+    DFBCHECK(primary->SetColor(primary, 0x00, 0xFF, 0x00, 0xff));
     primary->FillRectangle(primary, x, y, 2 * screenWidth / 4, 2 * screenHeight / 8);
     /* create the font and set the created font for primary surface text drawing */
     DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc48, &fontInterface48));
