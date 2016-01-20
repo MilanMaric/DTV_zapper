@@ -73,7 +73,7 @@ void fillBlack()
                                /*red*/ 0x00,
                                /*green*/ 0x00,
                                /*blue*/ 0xff,
-                               /*alpha*/ 0x80));
+                               /*alpha*/ 0x00));
     primary->FillRectangle(/*surface to draw on*/ primary,
                            /*upper left x coordinate*/ 0,
                            /*upper left y coordinate*/ 0,
@@ -86,7 +86,7 @@ void fillBlack()
                                /*red*/ 0x00,
                                /*green*/ 0x00,
                                /*blue*/ 0xff,
-                               /*alpha*/ 0x80));
+                               /*alpha*/ 0x00));
     primary->FillRectangle(/*surface to draw on*/ primary,
                            /*upper left x coordinate*/ 0,
                            /*upper left y coordinate*/ 0,
@@ -222,7 +222,14 @@ void drawVolume(int32_t volume)
     int32_t surfaceHeight, surfaceWidth;
     char buffer[50];
     sprintf(buffer, "volume_%d.png", volume);
-    fillTransparent();
+    if (black == 0)
+    {
+        fillTransparent();
+    }
+    else
+    {
+        fillBlack();
+    }
     printf("%s : buffer %s\n", __FUNCTION__, buffer);
     /* create the image provider for the specified file */
     DFBCHECK(dfbInterface->CreateImageProvider(dfbInterface, buffer, &provider));
