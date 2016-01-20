@@ -347,6 +347,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     vpid = parms->vPid;
     //printf("%s: Player_Stream_Create\n", __FUNCTION__);
     drawTextInfo(1, vpid, apid, 1);
+    drawTextInfo(1, vpid, apid, 1);
     if (initPatParsing(handle) != NO_ERROR)
     {
         return ERROR;
