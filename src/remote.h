@@ -79,7 +79,7 @@ typedef enum remoteButton_Code
 typedef enum
 {
     VOLUME_PLUS = 1,
-    VOLUME_MINUS
+    VOLUME_MINUS,
     VOLUME_MUTE
 } RemoteVolumeCode;
 
