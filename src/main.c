@@ -15,7 +15,7 @@
  * Ovaj modul realizuje parsiranje PMT,PAT i EIT tabela, uz postojanje fukcija za
  * ispis sadrzaja na standardni izlaz.
  * 
- * @Author Petar Petrovic
+ * @Author Milan Maric
  * \notes
  *
  *****************************************************************************/

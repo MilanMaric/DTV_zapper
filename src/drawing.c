@@ -161,12 +161,12 @@ void setTimer(int32_t interval)
 
 }
 
-void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid)
+void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid, uint8_t tel)
 {
     char buffer[50];
     int x;
     int y;
-
+    char teletekst[] = "TXT";
 
 
     /* rectangle drawing */
@@ -210,9 +210,16 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid)
                                  /*x coordinate of the lower left corner of the resulting text*/ x,
                                  /*y coordinate of the lower left corner of the resulting text*/ y,
                                  /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
-
-    fontInterface48->Release(fontInterface48);
-
+    if (tel)
+    {
+        DFBCHECK(primary->DrawString(primary,
+                                     /*text to be drawn*/ teletekst,
+                                     /*number of bytes in the string, -1 for NULL terminated strings*/ -1,
+                                     /*x coordinate of the lower left corner of the resulting text*/ 2 * screenWidth / 4 - x,
+                                     /*y coordinate of the lower left corner of the resulting text*/ y,
+                                     /*in case of multiple lines, allign text to left*/ DSTF_LEFT));
+        fontInterface48->Release(fontInterface48);
+    }
 
     DFBCHECK(dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf", &fontDesc20, &fontInterface20));
     DFBCHECK(primary->SetFont(primary, fontInterface20));

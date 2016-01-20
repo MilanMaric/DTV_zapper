@@ -391,7 +391,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
     {
         if (service_number <= patTable->serviceInfoCount)
         {
-            drawTextInfo(currentServiceNumber, vpid, apid);
+            drawTextInfo(currentServiceNumber, vpid, apid, 0);
             printf("%s pressed button of current service number", __FUNCTION__);
             return NO_ERROR;
         }
@@ -462,7 +462,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 printf("Player stream not created\n");
             }
         }
-        drawTextInfo(service_number, vpid, apid);
+        drawTextInfo(service_number, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
         // printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
     }
     else
@@ -508,5 +508,5 @@ uint8_t getParsedTag()
 
 int32_t remoteInfoCallback(uint32_t code)
 {
-    drawTextInfo(currentServiceNumber, vpid, apid);
+    drawTextInfo(currentServiceNumber, vpid, apid, 0);
 }

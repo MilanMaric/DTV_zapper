@@ -161,7 +161,7 @@ void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArra
         if (pmtServiceInfoArray[i].es_info_length > 0)
         {
             if (*teletekst == 0)
-                *teletekst = (*(buffer + poc +) == 0x56);
+                *teletekst = (*(buffer + poc) == 0x56);
         }
         poc += pmtServiceInfoArray[i].es_info_length;
     }
