@@ -47,6 +47,7 @@ IDirectFBFont *fontInterface48 = NULL;
 DFBFontDescription fontDesc48;
 IDirectFBFont *fontInterface20 = NULL;
 DFBFontDescription fontDesc20;
+uint8_t black = 0;
 
 int16_t settedTimer = 0;
 
@@ -123,7 +124,14 @@ void deinitDirectFB()
 void timerFunction()
 {
     //   printf("%s started\n", __FUNCTION__);
-    fillTransparent();
+    if (black == 0)
+    {
+        fillTransparent();
+    }
+    else
+    {
+        fillBlack();
+    }
     primary->Flip(primary, NULL, 0);
     fillTransparent();
     memset(&timerSpec, 0, sizeof (timerSpec));
@@ -157,7 +165,16 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid, uint8_t 
     int y;
     char teletekst[] = "TXT";
     /* rectangle drawing */
-    fillTransparent();
+    if (vpid)
+    {
+        fillTransparent();
+        black = 0;
+    }
+    else
+    {
+        fillBlack();
+        black = 1;
+    }
     x = 1 * screenWidth / 4;
     y = 5 * screenHeight / 8;
     DFBCHECK(primary->SetColor(primary, 0x00, 0xFF, 0x00, 0x88));

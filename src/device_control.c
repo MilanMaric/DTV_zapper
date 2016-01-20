@@ -447,7 +447,6 @@ int32_t remoteServiceCallback(uint32_t service_number)
         else
         {
             printf("This service doesent contain video\n");
-            fillBlack();
         }
 
         if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->aStreamHandle))
