@@ -429,8 +429,8 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 atype = (type == 0x03) ? AUDIO_TYPE_DOLBY_AC3 : AUDIO_TYPE_MP3;
             }
         }
-        printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
-        printf("Atype:%d apid:%d\n", atype, apid);
+        //  printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
+        //  printf("Atype:%d apid:%d\n", atype, apid);
 
         if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle))
         {
@@ -462,6 +462,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 printf("Player stream not created\n");
             }
         }
+        printf("%s: %d %s teletekst", __FUNCTION__, service_number, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
         drawTextInfo(service_number, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
         // printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
     }
@@ -477,14 +478,14 @@ int32_t remoteVolumeCallback(uint32_t service)
 {
     static uint8_t volume = 0;
     uint32_t volumeTDP = 0;
-    printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
+    //    printf("Astreamhandle: %d\n", globHandle->aStreamHandle);
     if (service == VOLUME_PLUS)
     {
         volume++;
         volume = volume >= 10 ? 10 : volume;
         drawVolume(volume);
         Player_Volume_Get(globHandle->vStreamHandle, &volumeTDP);
-        printf("\tTDP volume: %d\n", volumeTDP);
+        //        printf("\tTDP volume: %d\n", volumeTDP);
         volumeTDP++;
         Player_Volume_Set(globHandle->vStreamHandle, volumeTDP);
     }
@@ -494,7 +495,7 @@ int32_t remoteVolumeCallback(uint32_t service)
         if (volume != 0)
             volume--;
         Player_Volume_Get(globHandle->aStreamHandle, &volumeTDP);
-        printf("\tTDP volume: %d\n", volumeTDP);
+        // F       printf("\tTDP volume: %d\n", volumeTDP);
         volumeTDP--;
         Player_Volume_Set(globHandle->aStreamHandle, volumeTDP);
         drawVolume(volume);
