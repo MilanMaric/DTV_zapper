@@ -511,7 +511,6 @@ int32_t remoteVolumeCallback(uint32_t service)
         else
         {
             drawVolume(volume);
-            f
         }
     }
 }
