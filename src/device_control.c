@@ -430,13 +430,13 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 atype = (type == 0x03) ? AUDIO_TYPE_DOLBY_AC3 : AUDIO_TYPE_MP3;
             }
         }
-        //  printf("\n\n Vtype:%d Vpid:%d\n", vtype, vpid);
-        //  printf("Atype:%d apid:%d\n", atype, apid);
 
         if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->vStreamHandle))
         {
             printf("Stream not removed\n");
         }
+        
+        
         if (vtype != 0 && vpid != 0)
         {
             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, vpid, vtype, &(globHandle->vStreamHandle)))
@@ -462,7 +462,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 printf("\n:::::::::::::::--------------------Audio stream not created::::::::::::::::::::::\n");
             }
         }
-        printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
+      //  printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
         drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
         // printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
     }

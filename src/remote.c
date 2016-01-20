@@ -77,7 +77,6 @@ void registerInfoButtonCallback(Remote_Control_Callback remote_ControllCallback)
     infoCallback = remote_ControllCallback;
 }
 
-
 void* remoteControlThread(void* nn)
 {
     const char* dev = "/dev/input/event0";
@@ -121,16 +120,18 @@ void* remoteControlThread(void* nn)
                 switch (eventBuf[i].code)
                 {
                 case REMOTE_BTN_PROGRAM_PLUS:
-                    service_number++;
-                    if (sectionNumberCallback(service_number) == ERROR)
-                        service_number--;
+                    if (sectionNumberCallback(service_number+1) == NO_ERROR)
+                    {
+                        service_number++;
+                    }
                     break;
                 case REMOTE_BTN_PROGRAM_MINUS:
-                    if (service_number != 0)
+                    if (service_number > 0)
                     {
-                        service_number--;
-                        if (sectionNumberCallback(service_number) == ERROR)
-                            service_number++;
+                        if (sectionNumberCallback(service_number - 1) == NO_ERROR)
+                        {
+                            service_number--;
+                        }
                     }
                     break;
                 case REMOTE_BTN_VOLUME_PLUS:
@@ -146,6 +147,7 @@ void* remoteControlThread(void* nn)
                     }
                     break;
                 case REMOTE_BTN_MUTE:
+                    printf(" MUTE\n");
                     if (volumeCallback != NULL)
                     {
                         volumeCallback(REMOTE_BTN_MUTE);
@@ -164,9 +166,11 @@ void* remoteControlThread(void* nn)
                     tmp_number = remoteCheckServiceNumberCode(eventBuf[i].code);
                     if (tmp_number != -1)
                     {
-                        service_number = tmp_number;
                         //  printf("****Service number: %d tmp_number\n", service_number);
-                        sectionNumberCallback(service_number);
+                        if (sectionNumberCallback(tmp_number) == NO_ERROR)
+                        {
+                            service_number = tmp_number;
+                        }
                     }
                 }
             }
