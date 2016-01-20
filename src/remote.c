@@ -120,18 +120,16 @@ void* remoteControlThread(void* nn)
                 switch (eventBuf[i].code)
                 {
                 case REMOTE_BTN_PROGRAM_PLUS:
-                    if (sectionNumberCallback(service_number+1) == NO_ERROR)
+                    if (sectionNumberCallback(service_number + 1) == NO_ERROR)
                     {
                         service_number++;
                     }
                     break;
                 case REMOTE_BTN_PROGRAM_MINUS:
-                    if (service_number > 0)
+
+                    if (sectionNumberCallback(service_number - 1) == NO_ERROR)
                     {
-                        if (sectionNumberCallback(service_number - 1) == NO_ERROR)
-                        {
-                            service_number--;
-                        }
+                        service_number--;
                     }
                     break;
                 case REMOTE_BTN_VOLUME_PLUS:

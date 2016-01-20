@@ -346,6 +346,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
     apid = parms->aPid;
     vpid = parms->vPid;
     //printf("%s: Player_Stream_Create\n", __FUNCTION__);
+    drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
     if (initPatParsing(handle) != NO_ERROR)
     {
         return ERROR;
@@ -464,6 +465,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
         }
       //  printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
         drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
+        
         // printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
     }
     else
