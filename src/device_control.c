@@ -374,8 +374,9 @@ void deviceDeInit(DeviceHandle *handle)
 {
     int i = 0;
     parsedTag = 0;
+    Player_Stream_Remove(handle->playerHandle, handle->sourceHandle, handle->aStreamHandle);
     Player_Stream_Remove(handle->playerHandle, handle->sourceHandle, handle->vStreamHandle);
-    Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
+    //Demux_Free_Filter(handle->playerHandle, handle->filterHandle);
     Player_Source_Close(handle->playerHandle, handle->sourceHandle);
     Player_Deinit(handle->playerHandle);
     Tuner_Deinit();
@@ -462,8 +463,8 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 printf("Player stream not created\n");
             }
         }
-        printf("%s: %d %s teletekst", __FUNCTION__, service_number, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
-        drawTextInfo(service_number, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
+        printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
+        drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
         // printf("\nVideo stream: %d audio stream: %d\n", globHandle->vStreamHandle, globHandle->aStreamHandle);
     }
     else
@@ -509,6 +510,6 @@ uint8_t getParsedTag()
 
 int32_t remoteInfoCallback(uint32_t code)
 {
-    printf("%s: %d %s teletekst", __FUNCTION__, service_number, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
+    printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
     drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
 }
