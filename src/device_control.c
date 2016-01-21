@@ -162,7 +162,6 @@ int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid)
 int32_t eit_Demux_Section_Filter_Callback(uint8_t *buffer)
 {
     parseEitTable(buffer, eitTable);
-    dumpEitTable(eitTable);
     pthread_mutex_lock(&eitMutex);
     pthread_cond_signal(&eitCondition);
     pthread_mutex_unlock(&eitMutex);
@@ -506,7 +505,7 @@ int32_t remoteVolumeCallback(uint32_t service)
     }
     if (service == VOLUME_MUTE)
     {
-        if (swap==0)
+        if (swap == 0)
         {
             drawVolume(0);
             swap = 1;
@@ -514,7 +513,7 @@ int32_t remoteVolumeCallback(uint32_t service)
         else
         {
             drawVolume(volume);
-swap=0;
+            swap = 0;
         }
     }
 }
