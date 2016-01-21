@@ -189,22 +189,33 @@ void dumpPmtTable(PmtTable* pmtTable)
     }
 }
 
+void dumpBuffer(uint8_t* buffer)
+{
+    int i = 0;
+    printf("\n<<<<<<<<<<<<<<<<<Buffer>>>>>>>>>>>>>>>>>>>>>>>>\n");
+    for (i = 0; i < 26; i++)
+    {
+        printf("%x ", buffer[i]);
+    }
+    printf("\n<<<<<<<<<<<<<<<<<Buffer>>>>>>>>>>>>>>>>>>>>>>>>\n");
+}
+
 void parseEitTable(uint8_t* buffer, EitTable* table)
 {
     parseEitHeader(buffer, &(table->header));
     dumpEitHeader(&(table->header));
     parseEitEvent(buffer + 13, &(table->events[0]));
     dumpEitEvent(&(table->events[0]));
-    
+    dumpBuffer(buffer);
 }
 
 void parseEitHeader(uint8_t* buffer, EitHeader* header)
 {
     header->table_id = buffer[0];
     header->section_syntax_indicator = buffer[1] >> 7;
-    header->section_length = (buffer[1]&0x0Fu) << 8 + buffer[2];
-    header->service_id = (buffer[3]) << 8 + buffer[4];
-    header->version_number = buffer[5]&0x3E;
+    header->section_length = (uint16_t) (((*(buffer + 1) << 8) + *(buffer + 2)) & 0x0FFF);
+    header->service_id = (uint16_t) ((*(buffer + 3) << 8) + *(buffer + 4));
+    header->version_number = (buffer[5]&0x3E) >> 1;
     header->current_next_indicator = buffer[5]&0x01;
     header->section_number = buffer[6];
     header->last_section_number = buffer[7];
@@ -238,7 +249,7 @@ void dumpEitEvent(EitEvents *event)
 
 void parseEitShortDescriptor(uint8_t* buffer, ShortEventDescriptor * desc)
 {
-    
+
 }
 
 void dumpEitHeader(EitHeader* table)

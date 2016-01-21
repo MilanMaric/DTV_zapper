@@ -210,7 +210,6 @@ int32_t initEitParsing(DeviceHandle* handle)
 
 int32_t initPatParsing(DeviceHandle *handle)
 {
-
     static struct timespec lockStatusWaitTime;
     static struct timeval now;
     // printf("%s: started\n", __FUNCTION__);
