@@ -194,6 +194,7 @@ void parseEitTable(uint8_t* buffer, EitTable* table)
     parseEitHeader(buffer, &(table->header));
     dumpEitHeader(&(table->header));
     parseEitEvent(buffer + 13, &(table->events[0]));
+    dumpEitEvent(&(table->events[0]));
     
 }
 
@@ -213,7 +214,7 @@ void parseEitHeader(uint8_t* buffer, EitHeader* header)
     header->last_table_id = buffer[13];
 }
 
-void parseEitEvent(uint8_t buffer, EitEvents* event)
+void parseEitEvent(uint8_t* buffer, EitEvents* event)
 {
     event->event_id = buffer[0] << 8 + buffer[1];
     event->start_time[0] = buffer[2];
@@ -230,14 +231,14 @@ void parseEitEvent(uint8_t buffer, EitEvents* event)
 void dumpEitEvent(EitEvents *event)
 {
     printf("\tEvent id: %d", event->event_id);
-    printf("\tStart time %x%x%x%x%x\n", event->start_time[0], event->start_time[1], event->start_time[2], event->start_time[3], event->start_time[4])
+    printf("\tStart time %x%x%x%x%x\n", event->start_time[0], event->start_time[1], event->start_time[2], event->start_time[3], event->start_time[4]);
     printf("\tDuration %x:%x:%x\n", event->durration[0], event->durration[1], event->durration[2]);
     printf("\tDescriptors loop length %d\n", event->descriptor_loop_length);
 }
 
 void parseEitShortDescriptor(uint8_t* buffer, ShortEventDescriptor * desc)
 {
-
+    
 }
 
 void dumpEitHeader(EitHeader* table)
