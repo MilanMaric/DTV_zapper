@@ -491,7 +491,7 @@ int32_t remoteVolumeCallback(uint32_t service)
         volume = volume >= 10 ? 10 : volume;
         drawVolume(volume);
         Player_Volume_Get(globHandle->playerHandle, &volumeTDP);
-        printf("\tTDP volume: %d\n", volumeTDP);
+        printf("\tTDP volume: %d %x\n", volumeTDP, volumeTDP);
         volumeTDP++;
         Player_Volume_Set(globHandle->playerHandle, volumeTDP);
     }
@@ -501,7 +501,7 @@ int32_t remoteVolumeCallback(uint32_t service)
         if (volume != 0)
             volume--;
         Player_Volume_Get(globHandle->playerHandle, &volumeTDP);
-        printf("\tTDP volume: %d\n", volumeTDP);
+        printf("\tTDP volume: %d %x \n", volumeTDP, volumeTDP);
         volumeTDP--;
         Player_Volume_Set(globHandle->playerHandle, volumeTDP);
         drawVolume(volume);
