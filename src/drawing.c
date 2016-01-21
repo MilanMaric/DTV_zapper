@@ -230,7 +230,7 @@ void drawVolume(int32_t volume)
     {
         fillBlack();
     }
-    printf("%s : buffer %s\n", __FUNCTION__, buffer);
+    // printf("%s : buffer %s\n", __FUNCTION__, buffer);
     /* create the image provider for the specified file */
     DFBCHECK(dfbInterface->CreateImageProvider(dfbInterface, buffer, &provider));
     /* get surface descriptor for the surface where the image will be rendered */
