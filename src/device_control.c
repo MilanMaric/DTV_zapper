@@ -451,7 +451,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
 
         if (Player_Stream_Remove(globHandle->playerHandle, globHandle->sourceHandle, globHandle->aStreamHandle))
         {
-            printf("Stream not removed\n");
+            printf("Audio tream not removed\n");
         }
 
         if (atype != 0 && apid != 0)
@@ -460,6 +460,10 @@ int32_t remoteServiceCallback(uint32_t service_number)
             if (Player_Stream_Create(globHandle->playerHandle, globHandle->sourceHandle, apid, atype, &(globHandle->aStreamHandle)))
             {
                 printf("\n:::::::::::::::--------------------Audio stream not created::::::::::::::::::::::\n");
+            }
+            else
+            {
+                printf("Audio stream created");
             }
         }
         //  printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
@@ -486,20 +490,20 @@ int32_t remoteVolumeCallback(uint32_t service)
         volume++;
         volume = volume >= 10 ? 10 : volume;
         drawVolume(volume);
-        Player_Volume_Get(globHandle->vStreamHandle, &volumeTDP);
+        Player_Volume_Get(globHandle->playerHandle, &volumeTDP);
         //        printf("\tTDP volume: %d\n", volumeTDP);
         volumeTDP++;
-        Player_Volume_Set(globHandle->vStreamHandle, volumeTDP);
+        Player_Volume_Set(globHandle->playerHandle, volumeTDP);
     }
 
     if (service == VOLUME_MINUS)
     {
         if (volume != 0)
             volume--;
-        Player_Volume_Get(globHandle->aStreamHandle, &volumeTDP);
+        Player_Volume_Get(globHandle->playerHandle, &volumeTDP);
         // F       printf("\tTDP volume: %d\n", volumeTDP);
         volumeTDP--;
-        Player_Volume_Set(globHandle->aStreamHandle, volumeTDP);
+        Player_Volume_Set(globHandle->playerHandle, volumeTDP);
         drawVolume(volume);
     }
     if (service == VOLUME_MUTE)
