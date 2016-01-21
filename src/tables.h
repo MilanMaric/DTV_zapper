@@ -107,7 +107,26 @@ typedef struct _PmtTable
     uint8_t teletekst;
 } PmtTable;
 
-typedef struct _EitTable
+typedef struct _ShortEventDesriptor
+{
+    uint8_t dvb_DescriptorTag;
+    uint8_t descriptor_length;
+    uint8_t languageCode;
+    uint8_t event_name_length;
+    char* event_name;
+} ShortEventDescriptor;
+
+typedef struct _EitEvents
+{
+    uint16_t event_id; //	16	This 16 bit field indicates the event id of the event for which information is given. Within a service this id must be unique.
+    uint8_t start_time[5];//start time	40	This 40 bit field gives the start time and date in UTC and MJD of the event. The first 16 bits represent the 16 bits MJD,then the 24-bit UTC as 6 digits in 4-bit BCD
+    uint8_t durration[3]; //	24	This 24 bit field indicates the length of the event in hours, minutes, seconds as 4 bits BCD. for instance 02:25:30 is encoded as 0x022530
+    uint8_t running_status; //	3	This field gives information about the status of the event, 000 = undefined, 001 = not running, 010 = start in a few seconds, 011 = pause, 100 = running, 101 - 111 reserved for future use. In the case of an NVOD reference event, the running status will be put to '0'
+    uint16_t descriptor_loop_length; //12	The length of the descriptor loop.
+    ShortEventDescriptor descriptors[MAX_NUM_OF_PIDS];
+} EitEvents;
+
+typedef struct _EitHeader
 {
     uint8_t table_id; //8 	Indicates to which table this section belongs, in this case EIT.
     uint8_t section_syntax_indicator; //1 Indicates whether a sub-table structure including CRC check is used.
@@ -121,15 +140,17 @@ typedef struct _EitTable
     uint16_t original_network_id; //	12	The ID of the original network where this transport stream originated.
     uint8_t segment_last_section_number; //	8	This 8 bit field gives the number of the last section of this segment of the sub-table. If the sub-table is not segmented, then this field must have the same value as the last section number field.
     uint8_t last_table_id; //	8	This 8 bit field indicates the last used table_id.
-    uint16_t event_id; //	16	This 16 bit field indicates the event id of the event for which information is given. Within a service this id must be unique.
-    //start time	40	This 40 bit field gives the start time and date in UTC and MJD of the event. The first 16 bits represent the 16 bits MJD,then the 24-bit UTC as 6 digits in 4-bit BCD
-    uint32_t duration; //	24	This 24 bit field indicates the length of the event in hours, minutes, seconds as 4 bits BCD. for instance 02:25:30 is encoded as 0x022530
-    uint8_t running_status; //	3	This field gives information about the status of the event, 000 = undefined, 001 = not running, 010 = start in a few seconds, 011 = pause, 100 = running, 101 - 111 reserved for future use. In the case of an NVOD reference event, the running status will be put to '0'
-    uint16_t descriptor_loop_length; //12	The length of the descriptor loop.
+} EitHeader;
+
+typedef struct _EitTable
+{
+    EitHeader header;
+    EitEvents events[MAX_NUM_OF_PIDS];
 } EitTable;
 
 void parseEitTable(uint8_t* buffer, EitTable* table);
-void dumpEitTable(EitTable* table);
+void dumpEitHeader(EitHeader* table);
+void parseEitHeader(uint8_t* buffer, EitHeader* header);
 
 void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArray[], uint16_t section_length);
 void parsePatHeader(uint8_t *buffer, PatHeader* patHeader);

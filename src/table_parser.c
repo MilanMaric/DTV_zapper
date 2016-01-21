@@ -191,21 +191,56 @@ void dumpPmtTable(PmtTable* pmtTable)
 
 void parseEitTable(uint8_t* buffer, EitTable* table)
 {
-    (*table).table_id = (uint8_t) (*(buffer + 0));
-    (*table).section_syntax_indicator = (uint8_t) (*(buffer + 1) << 7);
-    (*table).section_length = (uint16_t) (((*(buffer + 1) << 8) + *(buffer + 2))
-            & 0x0FFF);
-    (*table).service_id = (uint16_t) ((*(buffer + 3) << 8) + *(buffer + 4));
-    (*table).version_number = (uint8_t) *(buffer + 5) & 0x3E;
-    (*table).current_next_indicator = (uint8_t) *(buffer + 5) & 0x01;
-    (*table).section_number = (uint8_t) *(buffer + 6);
-    (*table).last_section_number = (uint8_t) *(buffer + 7);
-    (*table).transport_stream_id = (uint8_t) (*(buffer + 8) << 8)
-            + *(buffer + 9);
+    parseEitHeader(buffer, &(table->header));
+    dumpEitHeader(&(table->header));
+    parseEitEvent(buffer + 13, &(table->events[0]));
+    
+}
+
+void parseEitHeader(uint8_t* buffer, EitHeader* header)
+{
+    header->table_id = buffer[0];
+    header->section_syntax_indicator = buffer[1] >> 7;
+    header->section_length = (buffer[1]&0x0Fu) << 8 + buffer[2];
+    header->service_id = (buffer[3]) << 8 + buffer[4];
+    header->version_number = buffer[5]&0x3E;
+    header->current_next_indicator = buffer[5]&0x01;
+    header->section_number = buffer[6];
+    header->last_section_number = buffer[7];
+    header->transport_stream_id = buffer[8] << 8 + buffer[9];
+    header->original_network_id = buffer[10] << 8 + buffer[11];
+    header->segment_last_section_number = buffer[12];
+    header->last_table_id = buffer[13];
+}
+
+void parseEitEvent(uint8_t buffer, EitEvents* event)
+{
+    event->event_id = buffer[0] << 8 + buffer[1];
+    event->start_time[0] = buffer[2];
+    event->start_time[1] = buffer[3];
+    event->start_time[2] = buffer[4];
+    event->start_time[3] = buffer[5];
+    event->start_time[4] = buffer[6];
+    event->durration[0] = buffer[7];
+    event->durration[1] = buffer[8];
+    event->durration[2] = buffer[9];
+    event->descriptor_loop_length = (buffer[10]&0xF0) << 8 + buffer[11];
+}
+
+void dumpEitEvent(EitEvents *event)
+{
+    printf("\tEvent id: %d", event->event_id);
+    printf("\tStart time %x%x%x%x%x\n", event->start_time[0], event->start_time[1], event->start_time[2], event->start_time[3], event->start_time[4])
+    printf("\tDuration %x:%x:%x\n", event->durration[0], event->durration[1], event->durration[2]);
+    printf("\tDescriptors loop length %d\n", event->descriptor_loop_length);
+}
+
+void parseEitShortDescriptor(uint8_t* buffer, ShortEventDescriptor * desc)
+{
 
 }
 
-void dumpEitTable(EitTable* table)
+void dumpEitHeader(EitHeader* table)
 {
     printf("\n<<<<<<<<<<<<<<<<EIT table>>>>>>>>>>>>>>>>>>\n");
     printf("Table id: %d\n", table->table_id);
@@ -217,5 +252,8 @@ void dumpEitTable(EitTable* table)
     printf("section_number %d\n", table->section_number);
     printf("last_section_number %d\n", table->last_section_number);
     printf("transport_stream_id %d\n", table->transport_stream_id);
+    printf("original_network_id %d\n", table->original_network_id);
+    printf("segment_last_section_number %d", table->segment_last_section_number);
+    printf("last_table_id %d\n", table->last_table_id);
     printf("<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>\n");
 }
