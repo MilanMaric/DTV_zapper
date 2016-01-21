@@ -191,7 +191,7 @@ int32_t initEitParsing(DeviceHandle* handle)
     }
     // printf("%s : eit register section filter\n", __FUNCTION__);
 
-    pthread_mutex_lock(&pmtMutex);
+    pthread_mutex_lock(&eitMutex);
     if (ETIMEDOUT == pthread_cond_timedwait(&eitCondition, &eitMutex, &lockStatusWaitTime))
     {
         printf("\n%s:ERROR Lock timeout exceeded!\n", __FUNCTION__);
