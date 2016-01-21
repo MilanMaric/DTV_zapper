@@ -466,6 +466,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 printf("Audio stream created");
             }
         }
+        initEitParsing(globHandle);
         //  printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
         drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
 
