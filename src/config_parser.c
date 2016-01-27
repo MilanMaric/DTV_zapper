@@ -30,7 +30,7 @@ SOFTWARE.
 #include <stdlib.h>
 #include "config_parser.h"
 #include "tdp_api.h"
-#include "tables.h"
+#include "table_parser.h"
 
 char* trim(char * s)
 {

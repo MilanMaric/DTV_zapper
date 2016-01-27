@@ -7,7 +7,7 @@
  *
  * MULTIMEDIJALNI SISTEMI
  * -----------------------------------------------------
- * Naslov zadatka (npr. DVB Sniffer za EIT/SDT)
+ * DTV Zapper
  * -----------------------------------------------------
  *
  * \file table_parser.c
@@ -15,34 +15,10 @@
  * Ovaj modul realizuje parsiranje PMT,PAT i EIT tabela, uz postojanje fukcija za
  * ispis sadrzaja na standardni izlaz.
  * 
- * @Author Petar Petrovic
- * \notes
+ * @Author Milan Maric
  *
  *****************************************************************************/
 
-/*
- The MIT License (MIT)
-
-Copyright (c) 2015 Milan Marić
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
 #ifndef TABLES_H_
 #define TABLES_H_
 
@@ -149,13 +125,92 @@ typedef struct _EitTable
     EitEvents events[MAX_NUM_OF_EVENTS];
 } EitTable;
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje EIT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+table - [out] tabela u koju je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parseEitTable(uint8_t* buffer, EitTable* table);
+
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za ispis zaglavlja EIT tabele na standardni izlaz
+ *
+ * @param
+ * table - [in] tabela cije ce zaglavlje biti ispisano
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpEitHeader(EitHeader* table);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje zaglavlja EIT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+header - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parseEitHeader(uint8_t* buffer, EitHeader* header);
-void parseEitShortDescriptor(uint8_t* buffer, ShortEventDescriptor* desc);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje EIT dogadjaja (event)
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+event - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parseEitEvent(uint8_t* buffer, EitEvents* event);
+
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za ispis EIT evenata na standardni izlaz
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+patHeader - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpEitEvent(EitEvents* event);
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje EIT dogadjaja (event)
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+event - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArray[], uint16_t section_length);
 void parsePatHeader(uint8_t *buffer, PatHeader* patHeader);
 void parsePatTable(uint8_t *buffer, PatTable* table);

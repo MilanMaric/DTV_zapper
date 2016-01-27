@@ -7,7 +7,7 @@
  *
  * MULTIMEDIJALNI SISTEMI
  * -----------------------------------------------------
- * Naslov zadatka (npr. DVB Sniffer za EIT/SDT)
+ * DTV Zapper
  * -----------------------------------------------------
  *
  * \file table_parser.c
@@ -15,34 +15,10 @@
  * Ovaj modul realizuje parsiranje PMT,PAT i EIT tabela, uz postojanje fukcija za
  * ispis sadrzaja na standardni izlaz.
  * 
- * @Author Petar Petrovic
- * \notes
+ * @Author Milan Maric
  *
  *****************************************************************************/
-/*
- The MIT License (MIT)
-
-Copyright (c) 2015 Milan Marić
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
-#include "tables.h"
+#include "table_parser.h"
 #include "remote.h"
 #include <stdlib.h>
 #include <pthread.h>
@@ -52,6 +28,21 @@ SOFTWARE.
 #include <stdint.h>
 #include <string.h>
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje niza servisnih informacija iz PAT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+patServiceInfoArray - [out] niz servisnih informacija u koje je potrebno upisati parsirane vrijednosti
+ *
+section_length - [in] vrijednost koja predstavlja duzinu sekcije(polje iz PAT header - a)
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArray[], uint16_t section_length)
 {
     int brojPidova = (section_length - 10) / 4;
@@ -73,6 +64,19 @@ void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArra
     }
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje zaglavlja PAT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+patHeader - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePatHeader(uint8_t *buffer, PatHeader* patHeader)
 {
     (*patHeader).table_id = (uint8_t) (*(buffer + 0));
@@ -82,9 +86,20 @@ void parsePatHeader(uint8_t *buffer, PatHeader* patHeader)
     (*patHeader).version_number = (uint8_t) ((*(buffer + 5) >> 1) & 0x1F);
     (*patHeader).current_next_indicator = (uint8_t) (*(buffer + 5) & 0x01);
     (*patHeader).section_number = (uint8_t) (*(buffer + 6));
-    (*patHeader).last_section_number = (uint8_t) (*(buffer + 6));
+    (*patHeader).last_section_number = (uint8_t) (*(buffer + 7));
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za ispis zaglavlja PAT tabele na standarni izlaz
+ *
+ * @param
+patHeader - [in] zaglavlje PAT tabele
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpPatHeader(PatHeader* patHeader)
 {
     printf("\n<<<<<<<<<<<<<<<< Pat header >>>>>>>>>>>>>\n");
@@ -98,6 +113,19 @@ void dumpPatHeader(PatHeader* patHeader)
     printf("Last section number: %d", (*patHeader).last_section_number);
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje PAT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+table - [out] tabela u koju je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePatTable(uint8_t *buffer, PatTable* table)
 {
     printf("%s started\n", __FUNCTION__);
@@ -108,11 +136,33 @@ void parsePatTable(uint8_t *buffer, PatTable* table)
     (*table).serviceInfoCount = (uint8_t) ((*(*table).patHeader).section_length - 10) / 4;
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za ispis niza servisnih informacija PAT tabele na standarni izlaz
+ *
+ * @param
+patServiceInfo - [in] niz servisnih informacija PAT tabele
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpPatServiceInfo(PatServiceInfo* patServiceInfo)
 {
     printf("Program number: %d,pid: %d\n", patServiceInfo->program_number, patServiceInfo->pid);
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za ispis PAT tabele na standarni izlaz
+ *
+ * @param
+table - [in]  PAT tabela koja ce biti ispisana na standardni izlaz
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpPatTable(PatTable* table)
 {
     int i = 0;
@@ -122,12 +172,38 @@ void dumpPatTable(PatTable* table)
         dumpPatServiceInfo(&(table->patServiceInfoArray[i]));
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje PMT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+table - [out] tabela u koju je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePmt(uint8_t *buffer, PmtTable* table)
 {
     parsePmtHeader(buffer, table->pmtHeader);
     parsePmtServiceInfoArray(buffer, table->pmtServiceInfoArray, &((*table).streamCount), &(table->teletekst));
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje zaglavlja PMT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+patHeader - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader)
 {
     (*pmtHeader).table_id = (uint8_t) (*(buffer + 0));
@@ -142,6 +218,21 @@ void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader)
     (*pmtHeader).program_info_length = (uint16_t) (((*(buffer + 10) << 8) + *(buffer + 11)) & 0x0FFF);
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje niza servisnih informacija iz PMT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+pmtServiceInfoArray - [out] niz servisnih informacija u koje je potrebno upisati parsirane vrijednosti
+ *
+broj - [out] broj sekcija koje ce biti parsirane
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[], uint8_t* broj, uint8_t* teletekst)
 {
     uint8_t section_length = (uint16_t) (((*(buffer + 1) << 8) + *(buffer + 2)) & 0x0FFF);
@@ -168,6 +259,17 @@ void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArra
     *broj = i;
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za ispis PMT tabele na standarni izlaz
+ *
+ * @param
+table - [in]  PAT tabela koja ce biti ispisana na standardni izlaz
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpPmtTable(PmtTable* pmtTable)
 {
     int i = 0;
@@ -189,6 +291,18 @@ void dumpPmtTable(PmtTable* pmtTable)
     }
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za ispis vrijednosti buffera u heksadecimalnom sistemu standarni izlaz,
+ * na taj nacin ova funkcija olaksava manipulaciju novim tabelama koje u skopu ovog projekta nisu parsirane
+ *
+ * @param
+table - [in]  PAT tabela koja ce biti ispisana na standardni izlaz
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpBuffer(uint8_t* buffer)
 {
     int i = 0;
@@ -200,6 +314,19 @@ void dumpBuffer(uint8_t* buffer)
     printf("\n<<<<<<<<<<<<<<<<<Buffer>>>>>>>>>>>>>>>>>>>>>>>>\n");
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje EIT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+table - [out] tabela u koju je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parseEitTable(uint8_t* buffer, EitTable* table)
 {
     parseEitHeader(buffer, &(table->header));
@@ -209,6 +336,19 @@ void parseEitTable(uint8_t* buffer, EitTable* table)
     dumpBuffer(buffer);
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje zaglavlja EIT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+header - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parseEitHeader(uint8_t* buffer, EitHeader* header)
 {
     header->table_id = buffer[0];
@@ -225,6 +365,19 @@ void parseEitHeader(uint8_t* buffer, EitHeader* header)
     header->last_table_id = buffer[13];
 }
 
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje EIT dogadjaja (event)
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+event - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parseEitEvent(uint8_t* buffer, EitEvents* event)
 {
     event->event_id = buffer[0] << 8 + buffer[1];
@@ -239,6 +392,19 @@ void parseEitEvent(uint8_t* buffer, EitEvents* event)
     event->descriptor_loop_length = (buffer[10]&0xF0) << 8 + buffer[11];
 }
 
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za ispis EIT evenata na standardni izlaz
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+patHeader - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpEitEvent(EitEvents *event)
 {
     printf("\tEvent id: %d", event->event_id);
@@ -247,11 +413,17 @@ void dumpEitEvent(EitEvents *event)
     printf("\tDescriptors loop length %d\n", event->descriptor_loop_length);
 }
 
-void parseEitShortDescriptor(uint8_t* buffer, ShortEventDescriptor * desc)
-{
-
-}
-
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za ispis zaglavlja EIT tabele na standardni izlaz
+ *
+ * @param
+ * table - [in] tabela cije ce zaglavlje biti ispisano
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpEitHeader(EitHeader* table)
 {
     printf("\n<<<<<<<<<<<<<<<<EIT table>>>>>>>>>>>>>>>>>>\n");

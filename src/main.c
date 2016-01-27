@@ -48,7 +48,7 @@ SOFTWARE.
 #include <stdint.h>
 #include "remote.h"
 #include "drawing.h"
-#include "tables.h"
+#include "table_parser.h"
 #include "remote.h"
 #include "config_parser.h"
 #include "device_control.h"
