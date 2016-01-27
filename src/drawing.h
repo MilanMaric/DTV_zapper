@@ -1,26 +1,23 @@
-/*
- The MIT License (MIT)
-
-Copyright (c) 2015 Milan Marić
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
+/****************************************************************************
+ *
+ * Univerzitet u Banjoj Luci, Elektrotehnicki fakultet
+ *
+ * -----------------------------------------------------
+ * Ispitni zadatak iz predmeta:
+ *
+ * MULTIMEDIJALNI SISTEMI
+ * -----------------------------------------------------
+ * DTV zapper
+ * -----------------------------------------------------
+ *
+ * \file drawing.c
+ * \brief
+ * Ovaj modul se kroisti za iscrtavanje informacija na ekran.
+ * 
+ * @Author Milan Maric
+ * \notes
+ *
+ *****************************************************************************/
 
 #ifndef drawing_h
 #define drawing_h
@@ -43,9 +40,60 @@ if (err != DFB_OK)                                          \
   }                                                         \
 }
 
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se kroisti za iscrtavanje informacija o trenutnom programu
+ *
+ * @param
+ * service_number - [in] btoj trenutnog programa
+ * vpid - [in] PID video streama
+ * apid - [in] PID audio streama
+ * teletekst - [in] vrijednost da li program sadrzi teletekst ili ne (0 = ne,>0 da)
+ *****************************************************************************/
 void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid, uint8_t teletekst);
+
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za inicijalizaciju directFB komponenti
+ * 
+ *****************************************************************************/
 void initDirectFB();
+
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za deinicijalizaciju directFB komponenti
+ * 
+ *****************************************************************************/
 void deinitDirectFB();
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja se koristi za iscrtavanje informacije o jacini zvuka
+ *
+ * @param
+ * volume -[in] vrijednost renutne jacine zvuka (od 0 do 9)
+ *****************************************************************************/
 void drawVolume(int32_t volume);
+
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za popunjavanje ekrana netransparentnom bojom 
+ * (u slucaju da kanal ne sadrzi video)
+ * 
+ *****************************************************************************/
 void fillBlack();
+
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za popunjavanje ekrana transparentnom bojom
+ * (brisanje iscrtanog sadrzaja)
+ * 
+ *****************************************************************************/
+void fillTransparent();
 #endif
