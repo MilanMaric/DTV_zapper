@@ -1,26 +1,23 @@
-/*
- The MIT License (MIT)
-
-Copyright (c) 2015 Milan Marić
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
+/****************************************************************************
+ *
+ * Univerzitet u Banjoj Luci, Elektrotehnicki fakultet
+ *
+ * -----------------------------------------------------
+ * Ispitni zadatak iz predmeta:
+ *
+ * MULTIMEDIJALNI SISTEMI
+ * -----------------------------------------------------
+ * DTV zapper
+ * -----------------------------------------------------
+ *
+ * \file config_parser.h
+ * \brief
+ * Ovaj modul se kroisti za iscrtavanje informacija na ekran.
+ * 
+ * @Author Milan Maric
+ * \notes
+ *
+ *****************************************************************************/
 
 #ifndef CONFIG_PARSER_H
 #define	CONFIG_PARSER_H
@@ -44,8 +41,40 @@ typedef struct config_parameters_s {
 }
 config_parameters;
 
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za parsiranje konfiguracione datoteke
+ *
+ * @param
+ * parms - [out] struktura u koju ce se upisati parametri
+ * config_file_path - [in] putanja do konfiguracione datoteke
+* @return
+NO_ERROR, ako nema greske
+*
+ERROR, u slucaju greske
+*
+*****************************************************************************/
 int32_t parseConfig(config_parameters * parms, char* config_file_path);
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja ispisuje konfiguracione parametre na standardni izlaz
+ *
+ * @param
+ * parms - [in] parametri koji ce biti ispisani
+ *****************************************************************************/
 void dumpConfig(const config_parameters * const parms);
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja ispisuje konfiguracione parametre na standardni izlaz
+ *
+ * @param
+ * parms - [in] parametri koji ce biti ispisani
+ *****************************************************************************/
 void initDefaultValues(config_parameters* parms);
 
 tStreamType str2AudioType(char* aType);

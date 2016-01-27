@@ -364,7 +364,7 @@ int deviceInit(config_parameters *parms, DeviceHandle *handle)
             return ERROR;
         }
     }
-    initEitParsing(handle);
+    //initEitParsing(handle);
     globHandle = handle;
     parsedTag = 1;
     return NO_ERROR;
@@ -466,7 +466,7 @@ int32_t remoteServiceCallback(uint32_t service_number)
                 printf("Audio stream created");
             }
         }
-        initEitParsing(globHandle);
+       // initEitParsing(globHandle);
         //  printf("%s: %d %s teletekst", __FUNCTION__, currentServiceNumber, (pmtTable[currentServiceNumber]->teletekst) ? "ima" : "nema");
         drawTextInfo(currentServiceNumber, vpid, apid, pmtTable[currentServiceNumber]->teletekst);
 

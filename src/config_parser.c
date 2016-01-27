@@ -101,9 +101,9 @@ int32_t parseConfig(config_parameters * parms, char* config_file_path)
             printf("WARNING: %s/%s: Unknown name/value pair!\n",
                    name, value);
     }
-
     /* Close file */
     fclose(fp);
+    return NO_ERROR;
 }
 
 void dumpConfig(const config_parameters * const parms)
