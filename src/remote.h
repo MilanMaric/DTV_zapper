@@ -7,41 +7,17 @@
  *
  * MULTIMEDIJALNI SISTEMI
  * -----------------------------------------------------
- * Naslov zadatka (npr. DVB Sniffer za EIT/SDT)
+ * DTV zapper
  * -----------------------------------------------------
  *
- * \file table_parser.c
+ * \file remote.h
  * \brief
- * Ovaj modul realizuje parsiranje PMT,PAT i EIT tabela, uz postojanje fukcija za
- * ispis sadrzaja na standardni izlaz.
+ * Ovaj modul predstavlja drajver za daljinski upravljac..
  * 
- * @Author Petar Petrovic
+ * @Author Milan Maric
  * \notes
  *
  *****************************************************************************/
-/*
- The MIT License (MIT)
-
-Copyright (c) 2015 Milan Marić
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
 #ifndef remote_h
 #define remote_h
 
@@ -84,11 +60,56 @@ typedef enum
 } RemoteVolumeCode;
 
 typedef int32_t(*Remote_Control_Callback)(uint32_t code);
-
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za registovanje callback funkcije koja ce biti pozvana u slucaju promjene programa
+ *
+ * @param
+ * remote_ControllCallback - [in] pokazivac na funkciju koja ce biti pozvana
+ *
+ *
+ *
+ *****************************************************************************/
 void registerServiceNumberRemoteCallBack(Remote_Control_Callback remote_ControllCallback);
+
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za registovanje callback funkcije koja ce biti pozvana u slucaju promjene jacine zvuka
+ *
+ * @param
+ * remote_ControllCallback - [in] pokazivac na funkciju koja ce biti pozvana
+ *
+ *
+ *
+ *****************************************************************************/
 void registerVolumeRemoteCallback(Remote_Control_Callback remoteControllCallback);
+
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za registovanje callback funkcije koja ce biti pozvana u slucaju pritiska info dugmeta
+ *
+ * @param
+ * remote_ControllCallback - [in] pokazivac na funkciju koja ce biti pozvana
+ *
+ *
+ *
+ *****************************************************************************/
 void registerInfoButtonCallback(Remote_Control_Callback remoteControllCallback);
 
+
+/****************************************************************************
+ *
+ * @brief
+ * Fukncija koja se treba kreirati kao poseban thread, a predstavlja beskonacnu petlju koja se vrti, 
+ * i u slucaju pritiska dugmeta na daljinskom upravljacu aktivira se odgovarajuca callback funkcija.
+ *
+ *
+ *
+ *
+ *****************************************************************************/
 void* remoteControlThread(void*);
 
 #endif

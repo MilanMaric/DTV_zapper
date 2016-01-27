@@ -7,41 +7,18 @@
  *
  * MULTIMEDIJALNI SISTEMI
  * -----------------------------------------------------
- * Naslov zadatka (npr. DVB Sniffer za EIT/SDT)
+ * DTV zapper
  * -----------------------------------------------------
  *
- * \file table_parser.c
+ * \file remote.c
  * \brief
- * Ovaj modul realizuje parsiranje PMT,PAT i EIT tabela, uz postojanje fukcija za
- * ispis sadrzaja na standardni izlaz.
+ * Ovaj modul predstavlja drajver za daljinski upravljac..
  * 
  * @Author Milan Maric
  * \notes
  *
  *****************************************************************************/
-/*
- The MIT License (MIT)
 
-Copyright (c) 2015 Milan Marić
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
 #include "remote.h"
 #include <stdio.h>
 #include <stdint.h>
@@ -52,7 +29,6 @@ SOFTWARE.
 #include <stdint.h>
 #include <errno.h>
 #include <pthread.h>
-#include "drawing.h"
 #include "tdp_api.h"
 
 static int32_t inputFileDesc;
@@ -60,23 +36,75 @@ static Remote_Control_Callback sectionNumberCallback;
 static Remote_Control_Callback volumeCallback;
 static Remote_Control_Callback infoCallback;
 
+/****************************************************************************
+ *
+ * @brief
+ *Funkcija koja cita detektuje dogadjaje sa ulaza
+ *
+ * @param
+ * count - [in] broj dogadjaja koji ce se ucitati
+ * buf - [out] memorijska lokacija u koju ce biti upisani dogadjaji
+ * eventsRead - [out] broj dogadjaja koji su ucitani
+ *****************************************************************************/
 int32_t getKeys(int32_t count, uint8_t* buf, int32_t* eventRead);
-
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za registovanje callback funkcije koja ce biti pozvana u slucaju promjene programa
+ *
+ * @param
+ * remote_ControllCallback - [in] pokazivac na funkciju koja ce biti pozvana
+ *
+ *
+ *
+ *****************************************************************************/
 void registerServiceNumberRemoteCallBack(Remote_Control_Callback remote_ControllCallback)
 {
     sectionNumberCallback = remote_ControllCallback;
 }
 
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za registovanje callback funkcije koja ce biti pozvana u slucaju promjene jacine zvuka
+ *
+ * @param
+ * remote_ControllCallback - [in] pokazivac na funkciju koja ce biti pozvana
+ *
+ *
+ *
+ *****************************************************************************/
 void registerVolumeRemoteCallback(Remote_Control_Callback remote_ControllCallback)
 {
     volumeCallback = remote_ControllCallback;
 }
 
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja se koristi za registovanje callback funkcije koja ce biti pozvana u slucaju pritiska info dugmeta
+ *
+ * @param
+ * remote_ControllCallback - [in] pokazivac na funkciju koja ce biti pozvana
+ *
+ *
+ *
+ *****************************************************************************/
 void registerInfoButtonCallback(Remote_Control_Callback remote_ControllCallback)
 {
     infoCallback = remote_ControllCallback;
 }
 
+/****************************************************************************
+ *
+ * @brief
+ * Fukncija koja se treba kreirati kao poseban thread, a predstavlja beskonacnu petlju koja se vrti, 
+ * i u slucaju pritiska dugmeta na daljinskom upravljacu aktivira se odgovarajuca callback funkcija.
+ *
+ *
+ *
+ *
+ *****************************************************************************/
 void* remoteControlThread(void* nn)
 {
     const char* dev = "/dev/input/event0";
@@ -84,7 +112,7 @@ void* remoteControlThread(void* nn)
     struct input_event* eventBuf;
     uint32_t eventCnt;
     uint32_t i;
-    uint32_t service_number = 0;
+    uint32_t service_number = 1;
     uint32_t tmp_number;
     uint32_t tmp_number2;
     inputFileDesc = open(dev, O_RDWR);
@@ -176,7 +204,18 @@ void* remoteControlThread(void* nn)
 
     }
 }
-
+/****************************************************************************
+ *
+ * @brief
+ * Fukcija koja u zavisnosti od pritisnutog dugmeta (broja) na daljinskom upravljacu
+ * vraca vrijednost koja je pritisnuta
+ *
+ * @param
+ * code - [in] kod pritisnutog dugmeta
+ *
+ *
+ *
+ *****************************************************************************/
 int32_t remoteCheckServiceNumberCode(int32_t code)
 {
     int32_t service_number = -1;
@@ -216,6 +255,16 @@ int32_t remoteCheckServiceNumberCode(int32_t code)
     return service_number;
 }
 
+/****************************************************************************
+ *
+ * @brief
+ *Funkcija koja cita detektuje dogadjaje sa ulaza
+ *
+ * @param
+ * count - [in] broj dogadjaja koji ce se ucitati
+ * buf - [out] memorijska lokacija u koju ce biti upisani dogadjaji
+ * eventsRead - [out] broj dogadjaja koji su ucitani
+ *****************************************************************************/
 int32_t getKeys(int32_t count, uint8_t* buf, int32_t* eventsRead)
 {
     int32_t ret = 0;

@@ -201,25 +201,147 @@ void dumpEitEvent(EitEvents* event);
 /****************************************************************************
  *
  * @brief
-Fukcija koja se koristi za parsiranje EIT dogadjaja (event)
+Fukcija koja se koristi za parsiranje niza servisnih informacija iz PAT tabele
  *
  * @param
 buff - [in] Ulazni bafer sa odmercima
  *
-event - [out] zaglavlje u koje je potrebno upisati vrijednosti
+patServiceInfoArray - [out] niz servisnih informacija u koje je potrebno upisati parsirane vrijednosti
+ *
+section_length - [in] vrijednost koja predstavlja duzinu sekcije(polje iz PAT header - a)
  *
  *
  *
  *****************************************************************************/
 void parsePatServiceInfoArray(uint8_t *buffer, PatServiceInfo patServiceInfoArray[], uint16_t section_length);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje zaglavlja PAT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+patHeader - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePatHeader(uint8_t *buffer, PatHeader* patHeader);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje PAT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+table - [out] tabela u koju je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePatTable(uint8_t *buffer, PatTable* table);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje PMT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+table - [out] tabela u koju je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePmt(uint8_t *buffer, PmtTable* table);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje zaglavlja PMT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+patHeader - [out] zaglavlje u koje je potrebno upisati vrijednosti
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePmtHeader(uint8_t *buffer, PmtHeader* pmtHeader);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za parsiranje niza servisnih informacija iz PMT tabele
+ *
+ * @param
+buff - [in] Ulazni bafer sa odmercima
+ *
+pmtServiceInfoArray - [out] niz servisnih informacija u koje je potrebno upisati parsirane vrijednosti
+ *
+broj - [out] broj sekcija koje ce biti parsirane
+ *
+ *
+ *
+ *****************************************************************************/
 void parsePmtServiceInfoArray(uint8_t *buffer, PmtServiceInfo pmtServiceInfoArray[], uint8_t* broj, uint8_t* teletekst);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za ispis PAT tabele na standarni izlaz
+ *
+ * @param
+table - [in]  PAT tabela koja ce biti ispisana na standardni izlaz
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpPatTable(PatTable* table);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za ispis PMT tabele na standarni izlaz
+ *
+ * @param
+table - [in]  PAT tabela koja ce biti ispisana na standardni izlaz
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpPmtTable(PmtTable* pmtTable);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za ispis zaglavlja PAT tabele na standarni izlaz
+ *
+ * @param
+patHeader - [in] zaglavlje PAT tabele
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpPatHeader(PatHeader* patHeader);
+
+/****************************************************************************
+ *
+ * @brief
+Fukcija koja se koristi za ispis niza servisnih informacija PAT tabele na standarni izlaz
+ *
+ * @param
+patServiceInfo - [in] niz servisnih informacija PAT tabele
+ *
+ *
+ *
+ *****************************************************************************/
 void dumpPatServiceInfo(PatServiceInfo* patServiceInfo);
 
 
