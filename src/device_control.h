@@ -1,26 +1,23 @@
-/*
- The MIT License (MIT)
-
-Copyright (c) 2015 Milan Marić
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
+/****************************************************************************
+ *
+ * Univerzitet u Banjoj Luci, Elektrotehnicki fakultet
+ *
+ * -----------------------------------------------------
+ * Ispitni zadatak iz predmeta:
+ *
+ * MULTIMEDIJALNI SISTEMI
+ * -----------------------------------------------------
+ * DTV zapper
+ * -----------------------------------------------------
+ *
+ * \file device_control.h
+ * \brief
+ * Ovaj modul se koristi za kontrolu uredjaja.
+ * 
+ * @Author Milan Maric
+ * \notes
+ *
+ *****************************************************************************/
 
 #ifndef DEVICE_CONTROL_H
 #define	DEVICE_CONTROL_H
@@ -34,12 +31,57 @@ typedef struct _Handles
     uint32_t aStreamHandle;
 } DeviceHandle;
 
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja omogucava inicijalizaciju uredjaja. Ova funkcija poziva odgovarajuce
+ * funkcije za dobavljanje i parsiranje PAT i PMT tabela.
+ *
+ * @param parms - [in] struktura parametara procitanih iz konfiguracione datoteke
+ * @param handle - [out] struktura odgovarajucih handle vrijednosti
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
 int deviceInit(config_parameters *parms, DeviceHandle *handle);
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja omogucava deinicijalizaciju uredjaja.
+ *
+ * @param handle - [out] handle vrijednosti koje ce biti izmjenjene prilikom 
+ * deinicijalizacije uredjaja
+ *****************************************************************************/
 void deviceDeInit(DeviceHandle *handle);
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja ce biti pozvana kao callback funkcija pri promjeni programa.
+ *
+ * @param service_number - [in] redni broj programa (pocevsi od 1)
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
 int32_t remoteServiceCallback(uint32_t service_number);
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja ce biti pozvana kao callback funkcija pri promjeni jacine zvuka.
+ *
+ * @param service_number - [in] VOLUME_UP, VOLUME_DOWN ili MUTE
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
 int32_t remoteVolumeCallback(uint32_t service);
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja ce biti pozvana kao callback funkcija pri pritisku info tastera.
+ *
+ * @param code - [in] redni broj programa (pocevsi od 1)
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
 int32_t remoteInfoCallback(uint32_t code);
-uint8_t getParsedTag();
 
 #endif	/* DEVICE_CONTROL_H */
 

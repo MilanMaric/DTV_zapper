@@ -10,7 +10,7 @@
  * DTV zapper
  * -----------------------------------------------------
  *
- * \file drawing.c
+ * \file drawing.h
  * \brief
  * Ovaj modul se kroisti za iscrtavanje informacija na ekran.
  * 

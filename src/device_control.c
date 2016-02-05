@@ -1,26 +1,23 @@
-/*
- The MIT License (MIT)
-
-Copyright (c) 2015 Milan Marić
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
+/****************************************************************************
+ *
+ * Univerzitet u Banjoj Luci, Elektrotehnicki fakultet
+ *
+ * -----------------------------------------------------
+ * Ispitni zadatak iz predmeta:
+ *
+ * MULTIMEDIJALNI SISTEMI
+ * -----------------------------------------------------
+ * DTV zapper
+ * -----------------------------------------------------
+ *
+ * \file device_control.c
+ * \brief
+ * Ovaj modul se koristi za kontrolu uredjaja.
+ * 
+ * @Author Milan Maric
+ * \notes
+ *
+ *****************************************************************************/
 
 #include "tdp_api.h"
 #include "table_parser.h"
@@ -62,6 +59,75 @@ uint8_t vtype = 0;
 uint8_t atype = 0;
 uint16_t apid = 0;
 uint32_t currentServiceNumber = 1;
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja ce biti pozvana kao callback funkcija prilikom zakljucavanja 
+ * tuner-a.
+ *
+ * @param status - [in] status tunerai
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
+int32_t tunerStatusCallback(t_LockStatus status);
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja ce biti pozvana prilikom dohvatanja PAT sekcije.
+ *
+ * @param buffer - [in] buffer koji se prima sa streama i u kome se nalazi PAT sekcija
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
+int32_t pat_Demux_Section_Filter_Callback(uint8_t *buffer);
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja ce biti pozvana prilikom dohvatanja PMT sekcije.
+ *
+ * @param buffer - [in] buffer koji se prima sa streama i u kome se nalazi PMT sekcija
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
+int32_t pmt_Demux_Section_Filter_Callback(uint8_t *buffer);
+
+/****************************************************************************
+ *
+ * @brief  Funkcija koja ce inicijalizovati parsiranje PMT tabele
+ *
+ * @param handle - [out] vrijednsot handle strukture
+ * @param pid - [in] pid tabele koja se zeli parsirati 
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
+int32_t initPmtParsing(DeviceHandle* handle, uint16_t pid);
+
+/****************************************************************************
+ *
+ * @brief
+ * Funkcija koja ce biti pozvana prilikom dohvatanja EIT sekcije.
+ *
+ * @param buffer - [in] buffer koji se prima sa streama i u kome se nalazi EIT sekcija
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
+int32_t eit_Demux_Section_Filter_Callback(uint8_t *buffer);
+
+/****************************************************************************
+ *
+ * @brief  Funkcija koja ce inicijalizovati parsiranje EIT tabele
+ *
+ * @param handle - [out] vrijednsot handle strukture 
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
+int32_t initEitParsing(DeviceHandle* handle);
+
+/****************************************************************************
+ *
+ * @brief  Funkcija koja ce inicijalizovati parsiranje PAT tabele
+ *
+ * @param handle - [out] vrijednsot handle strukture 
+ * @return NO_ERROR, ako nema greske, ERROR, u slucaju greske
+ *****************************************************************************/
+int32_t initPatParsing(DeviceHandle *handle);
 
 int32_t tunerStatusCallback(t_LockStatus status)
 {

@@ -48,6 +48,12 @@ uint8_t black = 0;
 
 int16_t settedTimer = 0;
 
+/****************************************************************************
+ *
+ * @brief Fukcija koja se koristi za popunjavanje ekrana transparentnom bojom, 
+ * odnosno brisanje iscrtanih grafickih komponenti
+ * 
+ *****************************************************************************/
 void fillTransparent()
 {
     // printf("fill black\n");
@@ -66,8 +72,7 @@ void fillTransparent()
 
 /****************************************************************************
  *
- * @brief
- * Fukcija koja se koristi za popunjavanje ekrana netransparentnom bojom 
+ * @brief Fukcija koja se koristi za popunjavanje ekrana netransparentnom bojom 
  * (u slucaju da program ne sadrzi video)
  * 
  *****************************************************************************/
@@ -101,8 +106,7 @@ void fillBlack()
 
 /****************************************************************************
  *
- * @brief
- * Fukcija koja se koristi za inicijalizaciju directFB komponenti
+ * @brief Fukcija koja se koristi za inicijalizaciju directFB komponenti
  * 
  *****************************************************************************/
 void initDirectFB()
@@ -173,11 +177,10 @@ void setTimer(int32_t interval)
  * @brief
  * Fukcija koja se kroisti za iscrtavanje informacija o trenutnom programu
  *
- * @param
- * service_number - [in] btoj trenutnog programa
- * vpid - [in] PID video streama
- * apid - [in] PID audio streama
- * teletekst - [in] vrijednost da li program sadrzi teletekst ili ne (0 = ne,>0 da)
+ * @param service_number - [in] btoj trenutnog programa
+ * @param vpid - [in] PID video streama
+ * @param apid - [in] PID audio streama
+ * @param teletekst - [in] vrijednost da li program sadrzi teletekst ili ne (0 = ne,>0 da)
  *****************************************************************************/
 void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid, uint8_t tel)
 {
@@ -241,8 +244,7 @@ void drawTextInfo(int32_t service_number, uint16_t vpid, uint16_t apid, uint8_t 
  * @brief
  * Funkcija koja se koristi za iscrtavanje informacije o jacini zvuka
  *
- * @param
- * volume -[in] vrijednost renutne jacine zvuka (od 0 do 9)
+ * @param volume -[in] vrijednost renutne jacine zvuka (od 0 do 9)
  *****************************************************************************/
 void drawVolume(int32_t volume)
 {
